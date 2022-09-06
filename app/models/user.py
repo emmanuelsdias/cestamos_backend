@@ -13,4 +13,3 @@ class User(Base):
     token = Column(String, unique=True, index=True)
 
 
-

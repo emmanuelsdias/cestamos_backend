@@ -4,11 +4,14 @@ start:
 detect-ip-adress:
 	ipconfig
 
+init-migrations:
+	alembic init app/migrations
+
 makemigrations:
-	alembic -c alembic.ini revision --autogenerate -m "$(name)"
+	alembic -c app/alembic.ini revision --autogenerate -m "$(name)"
 
 migrate:
-	alembic upgrade head
+	alembic -c app/alembic.ini upgrade head
 
 unmigrate:
 	alembic -c app/alembic.ini downgrade -1
