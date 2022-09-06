@@ -5,7 +5,7 @@ detect-ip-adress:
 	ipconfig
 
 makemigrations:
-	alembic -c app/alembic.ini revision --autogenerate -m "$(name)"
+	alembic -c alembic.ini revision --autogenerate -m "$(name)"
 
 migrate:
 	alembic upgrade head

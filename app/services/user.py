@@ -45,4 +45,5 @@ class UserService(ABCUserService):
             hashed_password=hashed_password,
             username=user.username,
         )
-        return User.from_orm(self.dal.create_user(user=db_user))
+        created_user = self.dal.create_user(user=db_user)
+        return User.from_orm(created_user)
