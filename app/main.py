@@ -1,12 +1,13 @@
 import uvicorn
 from fastapi import FastAPI
-from app.controllers import user
+from app.controllers import user, recipe
 
 import alembic.config
 
 app = FastAPI()
 
 app.include_router(user.router, prefix="/user", tags=["User"])
+app.include_router(recipe.router, prefix="/recipe", tags=["Recipe"])
 
 alembic_args = ["--raiseerr", "-c", "app/alembic.ini", "upgrade", "head"]
 
