@@ -3,6 +3,8 @@ import abc
 from pydantic import parse_obj_as
 
 from app.dal.recipe import ABCRecipeDal
+from app.dal.user import ABCUserDal
+
 from app.dto.recipe import Recipe, RecipeCreate, RecipeSummary
 
 from app.models.recipe import Recipe as RecipeModel
@@ -29,8 +31,10 @@ class RecipeService(ABCRecipeService):
     def __init__(
         self,
         recipe_dal: ABCRecipeDal,
+        user_dal: ABCUserDal,
     ):
         self.dal = recipe_dal
+        self.user_dal = user_dal
 
     def get_all_recipes(self, limit: int = 100) -> List[RecipeSummary]:
         return parse_obj_as(List[RecipeSummary], self.dal.get_all_recipes(limit))
@@ -38,7 +42,7 @@ class RecipeService(ABCRecipeService):
     def get_recipe_by_id(self, recipe_id: int) -> Recipe:
         return parse_obj_as(Recipe, self.dal.get_recipe_by_id(recipe_id))
 
-    def create_recipe(self, recipe: RecipeCreate) -> Recipe:
+    def create_recipe(self, recipe: RecipeCreate, token: str) -> Recipe:
         db_recipe = RecipeModel(
             user_id=1, # TODO: get user_id from auth token.
             ingredients=hashed_password,

@@ -12,6 +12,7 @@ router = APIRouter()
 
 @router.get("/", response_model=List[RecipeSummary])
 async def get_all_recipes(
+    token: str = None,
     recipe_service: ABCRecipeService = Depends(get_recipe_service)
 ):
     return recipe_service.get_all_recipes()
@@ -19,13 +20,15 @@ async def get_all_recipes(
 @router.post("/", response_model=Recipe)
 async def create_recipe(
     recipe: RecipeCreate,
+    token: str = None,
     recipe_service: ABCRecipeService = Depends(get_recipe_service)
 ):
-    return recipe_service.create_recipe(recipe)
+    return recipe_service.create_recipe(recipe, token)
 
 @router.get("/:recipe_id", response_model=Recipe)
 async def get_recipe_by_id(
     recipe_id: int,
+    token: str = None,
     recipe_service: ABCRecipeService = Depends(get_recipe_service)
 ):
     return recipe_service.get_recipe_by_id()
@@ -35,6 +38,7 @@ async def get_recipe_by_id(
 async def get_recipe_by_id(
     recipe_id: int,
     recipe: RecipeCreate,
+    token: str = None,
     recipe_service: ABCRecipeService = Depends(get_recipe_service)
 ):
     return recipe_service.get_recipe_by_id()
