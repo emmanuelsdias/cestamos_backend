@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 from pydantic import BaseModel
 
 class UserCreate(BaseModel):
@@ -8,9 +8,18 @@ class UserCreate(BaseModel):
 
 
 class User(BaseModel):
-    id: int
+    user_id: int
     username: str
     email: str
+
+    class Config:
+        orm_mode = True
+
+class UserAuth(BaseModel):
+    user_id: int
+    username: str
+    email: str
+    token: Union[str, None]
 
     class Config:
         orm_mode = True

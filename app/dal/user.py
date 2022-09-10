@@ -26,8 +26,8 @@ class UserDal(ABCUserDal):
     def __init__(self, db_session: Session):
         self.db: Session = db_session
 
-    def get_users(self, limit: int = 100) -> List[User]:
-        return self.db.query(User).limit(limit).all()
+    def get_users(self) -> List[User]:
+        return self.db.query(User).all()
 
     def get_user_by_id(self, user_id: int) -> User:
         return self.db.query(User).filter(User.id == user_id).first()
