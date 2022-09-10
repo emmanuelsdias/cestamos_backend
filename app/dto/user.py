@@ -1,16 +1,21 @@
-from typing import List
+from typing import List, Union
 from pydantic import BaseModel
+from app.dto.output_dto import OutputBaseModel
 
 class UserCreate(BaseModel):
-    username: str
+    username: Union[str, None]
     email: str
     password: str
 
 
-class User(BaseModel):
-    id: int
+class User(OutputBaseModel):
+    user_id: int
     username: str
     email: str
 
-    class Config:
-        orm_mode = True
+
+class UserAuth(OutputBaseModel):
+    user_id: int
+    username: str
+    email: str
+    token: Union[str, None]
