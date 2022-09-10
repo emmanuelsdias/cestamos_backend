@@ -21,4 +21,4 @@ async def get_all_users(
     user: UserCreate,
     user_service: ABCUserService = Depends(get_user_service)
 ):
-    return user_service.create_user(user)
+    return user_service.save_user(user)

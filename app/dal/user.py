@@ -1,6 +1,7 @@
 import abc
 from pydantic import parse_obj_as
 from sqlalchemy.orm import Session
+from sqlalchemy import update
 
 from app.models.user import User
 
@@ -20,6 +21,10 @@ class ABCUserDal():
     def create_user(self, user: User) -> User:
         """Creates a new user in database"""
 
+    @abc.abstractmethod
+    def update_user_auth(self, user: User) -> User:
+        """Login user"""
+
 
 class UserDal(ABCUserDal):
 
@@ -30,7 +35,7 @@ class UserDal(ABCUserDal):
         return self.db.query(User).all()
 
     def get_user_by_id(self, user_id: int) -> User:
-        return self.db.query(User).filter(User.id == user_id).first()
+        return self.db.query(User).filter(User.user_id == user_id).first()
 
     def get_user_by_email(self, email: str) -> User:
         return self.db.query(User).filter(User.email == email).first()
@@ -40,3 +45,11 @@ class UserDal(ABCUserDal):
         self.db.commit()
         self.db.refresh(user)
         return user
+
+    def update_user_auth(self, user: User) -> User:
+        stmt = update(User).where(User.user_id == user.user_id).values(token=user.token).\
+            execution_options(synchronize_session="fetch")
+        self.db.execute(stmt)
+        self.db.commit()
+        self.db.refresh(user)
+        return self.get_user_by_id(user.user_id)
