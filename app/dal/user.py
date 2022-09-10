@@ -37,6 +37,9 @@ class UserDal(ABCUserDal):
     def get_user_by_id(self, user_id: int) -> User:
         return self.db.query(User).filter(User.user_id == user_id).first()
 
+    def get_user_by_token(self, token: str) -> User:
+        return self.db.query(User).filter(User.token == token).first()
+
     def get_user_by_email(self, email: str) -> User:
         return self.db.query(User).filter(User.email == email).first()
 
