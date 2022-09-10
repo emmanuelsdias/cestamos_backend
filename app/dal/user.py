@@ -10,12 +10,18 @@ from typing import List
 class ABCUserDal():
 
     @abc.abstractmethod
-    def get_all_users(self) -> List[User]:
+    def get_users(self) -> List[User]:
         """Gets all users in database"""
 
     @abc.abstractmethod
     def get_user_by_id(self, user_id: int) -> User:
         """Gets the user in database with the given id"""
+
+    def get_user_by_token(self, token: str) -> User:
+        """Gets the user in database with the given token"""
+
+    def get_user_by_email(self, email: str) -> User:
+        """Gets the user in database with the given email"""
 
     @abc.abstractmethod
     def create_user(self, user: User) -> User:
@@ -36,6 +42,9 @@ class UserDal(ABCUserDal):
 
     def get_user_by_id(self, user_id: int) -> User:
         return self.db.query(User).filter(User.user_id == user_id).first()
+
+    def get_user_by_token(self, token: str) -> User:
+        return self.db.query(User).filter(User.token == token).first()
 
     def get_user_by_email(self, email: str) -> User:
         return self.db.query(User).filter(User.email == email).first()
