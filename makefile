@@ -15,3 +15,9 @@ migrate:
 
 unmigrate:
 	alembic -c app/alembic.ini downgrade -1
+
+freeze:
+	pip freeze > requirements.txt
+
+install:
+	pip install -r requirements.txt
