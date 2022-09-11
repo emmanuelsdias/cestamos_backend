@@ -1,5 +1,4 @@
 import abc
-from fastapi import HTTPException
 from pydantic import parse_obj_as
 
 from app.dal.recipe import ABCRecipeDal
@@ -10,11 +9,16 @@ from app.dto.recipe import Recipe, RecipeCreate, RecipeSummary
 from app.models.recipe import Recipe as RecipeModel
 from app.models.user import User as UserModel
 
-from app.utils.settings import Settings
+from app.services.user_based_service import UserBasedService
+
 
 from typing import List
 
-class ABCRecipeService():
+class ABCRecipeService(UserBasedService):
+
+    def __init__(self, user_dal: ABCUserDal):
+        super().__init__(user_dal)
+
     @abc.abstractmethod
     def get_recipes(self, token) -> List[RecipeSummary]:
         """ Returns recipes from user """
@@ -43,20 +47,9 @@ class RecipeService(ABCRecipeService):
         recipe_dal: ABCRecipeDal,
         user_dal: ABCUserDal,
     ):
+        super().__init__(user_dal)
         self.dal = recipe_dal
-        self.user_dal = user_dal
 
-    def check_user_validity(self, token: str):
-        if token is None:
-            raise HTTPException(
-                status_code=403, detail="Access Denied"
-            )
-        user = self.user_dal.get_user_by_token(token)
-        if user is None:
-            raise HTTPException(
-                status_code=403, detail="Access Denied"
-            )
-        return user
 
     def get_recipes(self, token) -> List[RecipeSummary]:
         user = self.check_user_validity(token)
