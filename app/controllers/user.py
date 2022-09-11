@@ -17,7 +17,7 @@ async def get_all_users(
     return user_service.get_all_users()
 
 @router.post("/", response_model=UserAuth)
-async def get_all_users(
+async def save_user(
     user: UserCreate,
     user_service: ABCUserService = Depends(get_user_service)
 ):
