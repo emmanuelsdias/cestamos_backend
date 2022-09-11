@@ -1,23 +1,8 @@
 from fastapi import Depends
-from sqlalchemy.orm import Session
 
-from app.dal.user import UserDal, ABCUserDal
-
-from app.factories.config import get_settings
-from app.factories.db_session import get_db
-
+from app.dal.user import ABCUserDal
+from app.factories.dal_factories import get_user_dal
 from app.services.user import ABCUserService, UserService
-from app.utils.settings import Settings
-
-
-def get_user_dal(
-    db: Session = Depends(get_db)
-) -> ABCUserDal:
-    dal = UserDal(db)
-    try:
-        yield dal
-    finally:
-        pass
 
 
 def get_user_service(
