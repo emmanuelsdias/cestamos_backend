@@ -54,7 +54,6 @@ class RecipeService(ABCRecipeService):
     def get_recipes(self, token) -> List[RecipeSummary]:
         user = self.check_user_validity(token)
         recipes = self.dal.get_recipes_from_user(user.user_id)
-        print(recipes)
         return parse_obj_as(List[RecipeSummary], recipes)
 
     def get_recipe_by_id(self, recipe_id: int, token: str) -> Recipe:
