@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app.dal.user import UserDal, ABCUserDal
 from app.dal.recipe import RecipeDal, ABCRecipeDal
 from app.dal.invitation import InvitationDal, ABCInvitationDal
+from app.dal.friendship import FriendshipDal, ABCFriendshipDal
 
 from app.factories.db_session import get_db
 
@@ -34,3 +35,16 @@ def get_invitation_dal(
         yield dal
     finally:
         pass
+
+
+def get_friendship_dal(
+    db: Session = Depends(get_db)
+) -> ABCFriendshipDal:
+    dal = FriendshipDal(db)
+    try:
+        yield dal
+    finally:
+        pass
+
+
+
