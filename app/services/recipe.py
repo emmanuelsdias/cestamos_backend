@@ -64,7 +64,7 @@ class RecipeService(ABCRecipeService):
             raise HTTPException(
                 status_code=403, detail="Access Denied"
             )
-        return parse_obj_as(Recipe, self.dal.get_recipe_by_id(recipe_id))
+        return parse_obj_as(Recipe, recipe)
 
     def create_recipe(self, recipe: RecipeCreate, token: str) -> Recipe:
         user = self.check_user_validity(token)
