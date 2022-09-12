@@ -1,7 +1,7 @@
 import abc
 from pydantic import parse_obj_as
 from sqlalchemy.orm import Session
-from sqlalchemy import update, or_
+from sqlalchemy import update, or_, and_
 
 from app.models.friendship import Friendship
 
@@ -16,6 +16,10 @@ class ABCFriendshipDal():
     @abc.abstractmethod
     def get_friendships_from_user(self, user_id) -> List[Friendship]:
         """Gets all friendships in database from a user """
+    
+    @abc.abstractmethod
+    def get_friendship_from_user_pair(self, user_id1, user_id2) -> Friendship:
+        """ Gets the friendship between users 1 and 2 """
 
     @abc.abstractmethod
     def get_friendship_by_id(self, friendship_id) -> Friendship:
@@ -45,6 +49,19 @@ class FriendshipDal(ABCFriendshipDal):
             Friendship.user_id1 == user_id,
             Friendship.user_id2 == user_id
             )).all()
+
+
+    def get_friendship_from_user_pair(self, user_id1, user_id2) -> Friendship:
+        return self.db.query(Friendship).filter(or_(
+            and_(
+                Friendship.user_id1 == user_id1,
+                Friendship.user_id2 == user_id2
+                ),
+            and_(
+                Friendship.user_id1 == user_id2,
+                Friendship.user_id2 == user_id1
+            )
+            )).first()
 
 
     def get_friendship_by_id(self, friendship_id) -> Friendship:

@@ -7,8 +7,8 @@ class InvitationCreate(BaseModel):
 
 class Invitation(OutputBaseModel):
     invitation_id: int
-    user_id_1: int
+    user_id1: int
     username1: str
-    user_id_2: int
+    user_id2: int
     username2: str
     

@@ -19,7 +19,7 @@ class ABCInvitationDal():
         """Gets all invitations in database from a user """
 
     @abc.abstractmethod
-    def get_invitation_from_pair(self, user_id_1: int, user_id_2: int) -> Invitation:
+    def get_invitation_from_pair(self, user_id1: int, user_id2: int) -> Invitation:
         """Gets invitation in database from a pair of users """
 
     @abc.abstractmethod
@@ -45,14 +45,20 @@ class InvitationDal(ABCInvitationDal):
 
     def get_invitations_from_user(self, user_id) -> List[Invitation]:
         return self.db.query(Invitation).filter(or_(
-            Invitation.user_id_1 == user_id,
-            Invitation.user_id_2 == user_id
+            Invitation.user_id1 == user_id,
+            Invitation.user_id2 == user_id
             )).all()
 
-    def get_invitation_from_pair(self, user_id_1: int, user_id_2: int) -> Invitation:
-        return self.db.query(Invitation).filter(and_(
-            Invitation.user_id_1 == user_id_1,
-            Invitation.user_id_2 == user_id_2
+    def get_invitation_from_pair(self, user_id1: int, user_id2: int) -> Invitation:
+        return self.db.query(Invitation).filter(or_(
+            and_(
+                Invitation.user_id1 == user_id1,
+                Invitation.user_id2 == user_id2
+                ),
+            and_(
+                Invitation.user_id1 == user_id2,
+                Invitation.user_id2 == user_id1
+            )
             )).first()
 
     def get_invitation_by_id(self, invitation_id: int) -> Invitation:

@@ -38,6 +38,7 @@ async def get_invitation_by_id(
 async def delete_invitation(
     invitation_id: int,
     token: str = None,
+    accepted: bool = None,
     invitation_service: ABCInvitationService = Depends(get_invitation_service)
 ):
-    return invitation_service.delete_invitation(invitation_id, token)
+    return invitation_service.delete_invitation(invitation_id, token, accepted)
