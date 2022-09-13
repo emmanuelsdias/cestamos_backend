@@ -8,6 +8,6 @@ class UserList(Base):
     user_list_id = Column(Integer, primary_key=True, index=True)
 
     user_id = Column(Integer,ForeignKey("users.user_id"))
-    list_id = Column(Integer,ForeignKey("lists.list_id"))
+    shop_list_id = Column(Integer,ForeignKey("shop_lists.shop_list_id"))
     is_adm = Column(Boolean, default=False)
     is_nutritionist = Column(Boolean, default=False)

@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.dal.user import UserDal, ABCUserDal
 from app.dal.recipe import RecipeDal, ABCRecipeDal
-from app.dal.list import ListDal, ABCListDal
+from app.dal.shop_list import ShopListDal, ABCShopListDal
 from app.dal.invitation import InvitationDal, ABCInvitationDal
 from app.dal.friendship import FriendshipDal, ABCFriendshipDal
 
@@ -29,10 +29,10 @@ def get_recipe_dal(
         pass
 
 
-def get_list_dal(
+def get_shop_list_dal(
     db: Session = Depends(get_db)
-) -> ABCListDal:
-    dal = ListDal(db)
+) -> ABCShopListDal:
+    dal = ShopListDal(db)
     try:
         yield dal
     finally:

@@ -6,7 +6,7 @@ class Item(Base):
     
     item_id = Column(Integer, primary_key=True, index=True)
 
-    list_id = Column(Integer, ForeignKey("lists.list_id"))
+    shop_list_id = Column(Integer, ForeignKey("shop_lists.shop_list_id"))
     name = Column(String)
     quantity = Column(String)
     was_bought = Column(Boolean, default=False)
