@@ -27,6 +27,10 @@ class ABCShopListDal():
         """Gets the shop_list in database with the given id"""
 
     @abc.abstractmethod
+    def get_user_list_by_user_list_id(self, user_list_id: int) -> UserList:
+        """Gets the user_list in database with the given id"""
+
+    @abc.abstractmethod
     def get_user_lists_by_shop_list_id(self, shop_list_id: int) -> List[UserList]:
         """ Get users from list """
 
@@ -36,7 +40,7 @@ class ABCShopListDal():
         """Creates a new shop_list in database"""
 
     @abc.abstractmethod
-    def create_user_list(self, list_id: int, user_list: UserList) -> UserList:
+    def create_user_list(self, user_list: UserList) -> UserList:
         """Adds user to list"""
 
 
@@ -65,9 +69,17 @@ class ShopListDal(ABCShopListDal):
         ).first()
         return user_list
 
+
+    def get_user_list_by_user_list_id(self, user_list_id: int) -> UserList:
+        user_list = self.db.query(UserList).filter(
+            UserList.user_list_id == user_list_id
+        ).first()
+        return user_list
+
+
     def get_user_lists_by_shop_list_id(self, shop_list_id: int) -> List[UserList]:
         user_lists = self.db.query(UserList).filter(
-                UserList.shop_list_id == shop_list_id
+            UserList.shop_list_id == shop_list_id
         ).all()
         return user_lists
 
@@ -78,8 +90,21 @@ class ShopListDal(ABCShopListDal):
         self.db.refresh(shop_list)
         return shop_list
 
-    def create_user_list(self, list_id: int, user_list: UserList) -> UserList:
+    def create_user_list(self, user_list: UserList) -> UserList:
         self.db.add(user_list)
         self.db.commit()
         self.db.refresh(user_list)
         return user_list
+
+    def update_user_list(self, user_list: UserList) -> UserList:
+        self.db.query(UserList).filter(
+            UserList.user_list_id == user_list.user_list_id
+        ).\
+            update(
+                {
+                    "is_adm" : user_list.is_adm,
+                    "is_nutritionist" : user_list.is_nutritionist
+                }
+            )
+        self.db.commit()
+        return self.get_user_list_by_user_list_id(user_list.user_list_id)

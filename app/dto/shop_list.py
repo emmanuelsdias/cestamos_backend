@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 from pydantic import BaseModel
 from app.dto.output_dto import OutputBaseModel
 
@@ -6,6 +6,11 @@ from app.dto.output_dto import OutputBaseModel
 class UserListCreate(BaseModel):
     user_id: int
     is_nutritionist: bool
+
+
+class UserListStatus(BaseModel):
+    is_nutritionist: Union[bool, None]
+    is_adm: Union[bool, None]
 
 
 class UserList(OutputBaseModel):
