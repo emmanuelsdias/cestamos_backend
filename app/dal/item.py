@@ -17,13 +17,13 @@ class ABCItemDal():
     def get_items_from_list(self, shop_list_id: int) -> List[Item]:
         """Gets all items in database from a user """
 
-    # @abc.abstractmethod
-    # def get_item_by_id(self, item_id: int) -> Item:
-    #     """Gets the item in database with the given id"""
+    @abc.abstractmethod
+    def get_item_by_id(self, item_id: int) -> Item:
+        """Gets the item in database with the given id"""
 
-    # @abc.abstractmethod
-    # def create_item(self, item: Item) -> Item:
-    #     """Creates a new item in database"""
+    @abc.abstractmethod
+    def create_item(self, item: Item) -> Item:
+        """Creates a new item in database"""
 
     # @abc.abstractmethod
     # def update_item(self, item: Item) -> Item:
@@ -45,7 +45,11 @@ class ItemDal(ABCItemDal):
     def get_items_from_list(self, shop_list_id: int) -> List[Item]:
         return self.db.query(Item).filter(Item.shop_list_id == shop_list_id).all()
 
-    # def get_item_by_id(self, item_id: int) -> Item:
-    #     return self.db.query(Item).filter(Item.item_id == item_id).first()
+    def get_item_by_id(self, item_id: int) -> Item:
+        return self.db.query(Item).filter(Item.item_id == item_id).first()
 
-    
+    def create_item(self, item: Item) -> Item:
+        self.db.add(item)
+        self.db.commit()
+        self.db.refresh(item)
+        return item

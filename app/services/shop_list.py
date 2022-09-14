@@ -7,11 +7,14 @@ from app.dal.user import ABCUserDal
 from app.dal.friendship import ABCFriendshipDal
 from app.dal.item import ABCItemDal
 
-from app.dto.shop_list import ShopList, ShopListCreate, ShopListSummary, UserList, UserListCreate, Item
+from app.dto.shop_list import ShopList, ShopListCreate, ShopListSummary
+from app.dto.shop_list import UserList, UserListCreate
+from app.dto.shop_list import Item, ItemCreate
 
 from app.models.shop_list import ShopList as ShopListModel
 from app.models.user_list import UserList as UserListModel
 from app.models.user import User as UserModel
+from app.models.item import Item as ItemModel
 
 from app.services.user_based_service import UserBasedService
 
@@ -38,6 +41,10 @@ class ABCShopListService(UserBasedService):
     @abc.abstractmethod
     def add_users_to_list(self, shop_list_id: int, user_lists: List[UserListCreate], token: str) -> List[UserList]:
         """ Adds users to list """
+    
+    @abc.abstractmethod
+    def add_item_to_list(self, shop_list_id: int, item: ItemCreate, token: str) -> ShopList:
+        """ Adds item to list and return the resulting list """
 
 
 
@@ -185,6 +192,19 @@ class ShopListService(ABCShopListService):
         ]
 
         return user_lists_dto
+
+
+    def add_item_to_list(self, shop_list_id: int, item: ItemCreate, token: str) -> ShopList:
+        user = self.check_user_validity(token)
+        self.check_user_list_adm_validity(user.user_id, shop_list_id)
+        item_db = ItemModel(
+            shop_list_id = shop_list_id,
+            name = item.name,
+            quantity = item.quantity
+        )
+        self.item_dal.create_item(item_db)
+        
+        return self.get_shop_list_by_id(shop_list_id, token)
 
 
     def update_shop_list(self, shop_list_id: int, shop_list: ShopListCreate, token: str) -> ShopList:
