@@ -1,8 +1,10 @@
 import abc
 from pydantic import parse_obj_as
+from fastapi import HTTPException
 
 from app.dal.shop_list import ABCShopListDal
 from app.dal.user import ABCUserDal
+from app.dal.friendship import ABCFriendshipDal
 
 from app.dto.shop_list import ShopList, ShopListCreate, ShopListSummary, UserList
 
@@ -39,9 +41,11 @@ class ShopListService(ABCShopListService):
     def __init__(
         self,
         shop_list_dal: ABCShopListDal,
+        friendship_dal: ABCFriendshipDal,
         user_dal: ABCUserDal,
     ):
         super().__init__(user_dal)
+        self.friendship_dal = friendship_dal
         self.dal = shop_list_dal
 
 
@@ -102,8 +106,16 @@ class ShopListService(ABCShopListService):
             is_template = shop_list.is_template,
         )
         invited_user_ids = [id for id in shop_list.user_ids if id != user.user_id]
-        # TODO: check friendship
+        
+        for invited_user_id in invited_user_ids:
+            friendship = self.friendship_dal.get_friendship_from_user_pair(user.user_id, invited_user_id)
+            if friendship is None:
+                raise HTTPException(
+                    status_code=400, detail="Friendship necessary"
+                )
+
         created_shop_list = self.dal.create_shop_list(shop_list=db_shop_list)
+
         shop_list_id = created_shop_list.shop_list_id
         for user_id in invited_user_ids:
             user_list_db = UserListModel(
