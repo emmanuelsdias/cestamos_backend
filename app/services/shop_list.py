@@ -7,7 +7,7 @@ from app.dal.user import ABCUserDal
 from app.dal.friendship import ABCFriendshipDal
 from app.dal.item import ABCItemDal
 
-from app.dto.shop_list import ShopList, ShopListCreate, ShopListSummary, UserList, Item
+from app.dto.shop_list import ShopList, ShopListCreate, ShopListSummary, UserList, UserListCreate, Item
 
 from app.models.shop_list import ShopList as ShopListModel
 from app.models.user_list import UserList as UserListModel
@@ -35,6 +35,10 @@ class ABCShopListService(UserBasedService):
     def create_shop_list(self, shop_list: ShopListCreate, token: str) -> ShopList:
         """ Create a shop list """
 
+    @abc.abstractmethod
+    def add_users_to_list(self, shop_list_id: int, user_lists: List[UserListCreate], token: str) -> List[UserList]:
+        """ Adds users to list """
+
 
 
 class ShopListService(ABCShopListService):
@@ -52,7 +56,7 @@ class ShopListService(ABCShopListService):
         self.dal = shop_list_dal
 
 
-    def construct_user_list_dto(self, user_list):
+    def construct_user_list_dto(self, user_list) -> UserList:
         user = self.user_dal.get_user_by_id(user_list.user_id)
         user_list_dto = UserList(
             user_id = user.user_id,
@@ -66,12 +70,7 @@ class ShopListService(ABCShopListService):
     def construct_shop_list_summary_dto(self, shop_list: ShopListModel) -> ShopListSummary:
         user_lists = self.dal.get_user_lists_by_shop_list_id(shop_list.shop_list_id)
         user_lists_dto = [
-            UserList(
-                user_id = user_list.user_id,
-                username = self.user_dal.get_user_by_id(user_list.user_id).username,
-                is_adm = user_list.is_adm,
-                is_nutritionist = user_list.is_nutritionist
-            ) for user_list in user_lists
+            self.construct_user_list_dto(user_list) for user_list in user_lists
         ]
 
         shop_list_summary = ShopListSummary(
@@ -81,6 +80,19 @@ class ShopListService(ABCShopListService):
         )
 
         return shop_list_summary
+
+
+    def check_user_list_validity(self, user_id: int, shop_list_id: int) -> UserListModel:
+        user_list = self.dal.get_user_list_by_user_id(shop_list_id, user_id)
+        if user_list is None:
+            self.raise_access_denied_error()
+        return user_list
+
+    def check_user_list_adm_validity(self, user_id: int, shop_list_id: int) -> UserListModel:
+        user_list = self.check_user_list_validity(user_id, shop_list_id)
+        if not user_list.is_adm:
+            self.raise_access_denied_error()
+        return user_list
 
 
     def get_shop_lists(self, token) -> List[ShopListSummary]:
@@ -97,9 +109,7 @@ class ShopListService(ABCShopListService):
         user_lists = self.dal.get_user_lists_by_shop_list_id(shop_list_id)
 
         if not (user.user_id in [u.user_id for u in user_lists]):
-            raise HTTPException(
-                status_code=403, detail="Access Denied"
-            )
+            self.raise_access_denied_error()
 
         items = self.item_dal.get_items_from_list(shop_list_id)
         items_dto = parse_obj_as(List[Item], items)
@@ -150,6 +160,32 @@ class ShopListService(ABCShopListService):
         return created_shop_list_dto
     
 
+    def add_users_to_list(self, shop_list_id: int, user_lists: List[UserListCreate], token: str) -> List[UserList]:
+        user = self.check_user_validity(token)
+        self.check_user_list_adm_validity(user.user_id, shop_list_id)
+        current_user_lists = self.dal.get_user_lists_by_shop_list_id(shop_list_id)
+        current_user_list_ids = [u.user_id for u in current_user_lists]
+
+        for user_list in user_lists:
+            if not self.friendship_dal.get_friendship_from_user_pair(user.user_id, user_list.user_id):
+                continue
+            if user_list.user_id in current_user_list_ids:
+                continue
+            user_list_db = UserListModel(
+                user_id = user_list.user_id,
+                shop_list_id = shop_list_id,
+                is_nutritionist = user_list.is_nutritionist
+            )
+            self.dal.create_user_list(shop_list_id, user_list_db)
+        
+        user_lists = self.dal.get_user_lists_by_shop_list_id(shop_list_id)
+
+        user_lists_dto = [
+            self.construct_user_list_dto(user_list) for user_list in user_lists
+        ]
+
+        return user_lists_dto
+
 
     def update_shop_list(self, shop_list_id: int, shop_list: ShopListCreate, token: str) -> ShopList:
         user = self.check_user_validity(token)
@@ -159,9 +195,7 @@ class ShopListService(ABCShopListService):
                 status_code=400, detail="ShopList doesn't exist"
             )
         if user.user_id != current_shop_list.user_id:
-            raise HTTPException(
-                status_code=403, detail="Access Denied"
-            )
+            self.raise_access_denied_error()
         db_shop_list = ShopListModel(
             shop_list_id=shop_list_id,
             name = shop_list.name,
@@ -179,8 +213,6 @@ class ShopListService(ABCShopListService):
                 status_code=400, detail="ShopList doesn't exist"
             )
         if user.user_id != current_shop_list.user_id:
-            raise HTTPException(
-                status_code=403, detail="Access Denied"
-            )
+            self.raise_access_denied_error()
         deleted_shop_list = self.dal.delete_shop_list(shop_list_id)
         return ShopList.from_orm(deleted_shop_list)

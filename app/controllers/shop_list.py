@@ -4,7 +4,7 @@ from fastapi import Depends
 from app.services.shop_list import ABCShopListService
 from app.factories.shop_list import get_shop_list_service
 
-from app.dto.shop_list import ShopList, ShopListCreate, ShopListSummary
+from app.dto.shop_list import ShopList, ShopListCreate, ShopListSummary, UserList, UserListCreate
 from typing import List
 
 
@@ -32,3 +32,14 @@ async def get_shop_list_by_id(
     shop_list_service: ABCShopListService = Depends(get_shop_list_service)
 ):
     return shop_list_service.get_shop_list_by_id(shop_list_id, token)
+
+
+@router.post("/{shop_list_id}/user", response_model=List[UserList])
+async def add_users_to_list(
+    shop_list_id: int,
+    user_lists: List[UserListCreate],
+    token: str = None,
+    shop_list_service: ABCShopListService = Depends(get_shop_list_service)
+):
+    return shop_list_service.add_users_to_list(shop_list_id, user_lists, token)
+    

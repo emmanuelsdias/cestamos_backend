@@ -10,6 +10,11 @@ class UserList(OutputBaseModel):
     is_nutritionist: bool
 
 
+class UserListCreate(BaseModel):
+    user_id: int
+    is_nutritionist: bool
+
+
 class Item(OutputBaseModel):
     item_id: int
     name: str
@@ -32,4 +37,3 @@ class ShopListSummary(OutputBaseModel):
 
 class ShopList(ShopListSummary):
     items: List[Item]
-
