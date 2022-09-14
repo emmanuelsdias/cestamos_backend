@@ -5,8 +5,9 @@ from fastapi import HTTPException
 from app.dal.shop_list import ABCShopListDal
 from app.dal.user import ABCUserDal
 from app.dal.friendship import ABCFriendshipDal
+from app.dal.item import ABCItemDal
 
-from app.dto.shop_list import ShopList, ShopListCreate, ShopListSummary, UserList
+from app.dto.shop_list import ShopList, ShopListCreate, ShopListSummary, UserList, Item
 
 from app.models.shop_list import ShopList as ShopListModel
 from app.models.user_list import UserList as UserListModel
@@ -42,18 +43,19 @@ class ShopListService(ABCShopListService):
         self,
         shop_list_dal: ABCShopListDal,
         friendship_dal: ABCFriendshipDal,
+        item_dal: ABCItemDal,
         user_dal: ABCUserDal,
     ):
         super().__init__(user_dal)
         self.friendship_dal = friendship_dal
+        self.item_dal = item_dal
         self.dal = shop_list_dal
 
 
-    def construct_user_list_dto(self, user_id, shop_list_id):
-        user = self.user_dal.get_user_by_id(user_id)
-        user_list = self.dal.get_user_list_by_user_id(shop_list_id, user_id)
+    def construct_user_list_dto(self, user_list):
+        user = self.user_dal.get_user_by_id(user_list.user_id)
         user_list_dto = UserList(
-            user_id = user_id,
+            user_id = user.user_id,
             username = user.username,
             is_adm = user_list.is_adm,
             is_nutritionist = user_list.is_nutritionist
@@ -92,11 +94,24 @@ class ShopListService(ABCShopListService):
         user = self.check_user_validity(token)
 
         shop_list = self.dal.get_shop_list_by_id(shop_list_id)
-        if user.user_id != shop_list.user_id:
+        user_lists = self.dal.get_user_lists_by_shop_list_id(shop_list_id)
+
+        if not (user.user_id in [u.user_id for u in user_lists]):
             raise HTTPException(
                 status_code=403, detail="Access Denied"
             )
-        return parse_obj_as(ShopList, self.dal.get_shop_list_by_id(shop_list_id))
+
+        items = self.item_dal.get_items_from_list(shop_list_id)
+        items_dto = parse_obj_as(List[Item], items)
+        shop_list_dto = ShopList(
+            shop_list_id = shop_list_id,
+            name = shop_list.name,
+            user_lists = [self.construct_user_list_dto(user_list) for user_list in user_lists],
+            items = items_dto
+        )
+        
+        return shop_list_dto
+
 
     def create_shop_list(self, shop_list: ShopListCreate, token: str) -> ShopList:
         user = self.check_user_validity(token)
