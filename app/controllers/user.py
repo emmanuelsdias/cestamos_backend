@@ -22,3 +22,10 @@ async def save_user(
     user_service: ABCUserService = Depends(get_user_service)
 ):
     return user_service.save_user(user)
+
+@router.get("/{user_id}", response_model=UserAuth)
+async def get_user_by_id(
+    user_id: int,
+    user_service: ABCUserService = Depends(get_user_service)
+):
+    return user_service.get_user_by_id(user_id)
