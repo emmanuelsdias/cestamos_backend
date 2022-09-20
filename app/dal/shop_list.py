@@ -34,7 +34,6 @@ class ABCShopListDal():
     def get_user_lists_by_shop_list_id(self, shop_list_id: int) -> List[UserList]:
         """ Get users from list """
 
-
     @abc.abstractmethod
     def create_shop_list(self, shop_list: ShopList) -> ShopList:
         """Creates a new shop_list in database"""
@@ -42,6 +41,10 @@ class ABCShopListDal():
     @abc.abstractmethod
     def create_user_list(self, user_list: UserList) -> UserList:
         """Adds user to list"""
+
+    @abc.abstractmethod
+    def update_list(self, shop_list: ShopList) -> ShopList:
+        """ Updates list """
 
 
 class ShopListDal(ABCShopListDal):
@@ -108,3 +111,18 @@ class ShopListDal(ABCShopListDal):
             )
         self.db.commit()
         return self.get_user_list_by_user_list_id(user_list.user_list_id)
+
+
+    def update_list(self, shop_list: ShopList) -> ShopList:
+        self.db.query(ShopList).filter(
+            ShopList.shop_list_id == shop_list.shop_list_id
+        ).\
+            update(
+                {
+                    "name": shop_list.name,
+                    "ingredients": shop_list.ingredients,
+                    "instructions": shop_list.instructions,
+                }
+            )
+        self.db.commit()
+        return self.get_shop_list_by_id(shop_list.shop_list_id)

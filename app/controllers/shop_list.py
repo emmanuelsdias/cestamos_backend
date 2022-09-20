@@ -37,6 +37,25 @@ async def get_shop_list_by_id(
     return shop_list_service.get_shop_list_by_id(shop_list_id, token)
 
 
+@router.put("/{shop_list_id}", response_model=ShopList)
+async def rename_list(
+    shop_list_id: int,
+    new_name: str,
+    token: str = None,
+    shop_list_service: ABCShopListService = Depends(get_shop_list_service)
+):
+    return shop_list_service.rename_list(shop_list_id, new_name, token)
+
+
+@router.delete("/{shop_list_id}")
+async def delete_list(
+    shop_list_id: int,
+    token: str = None,
+    shop_list_service: ABCShopListService = Depends(get_shop_list_service)
+):
+    return shop_list_service.delete_list(shop_list_id, token)
+
+
 @router.post("/{shop_list_id}/user", response_model=List[UserList])
 async def add_users_to_list(
     shop_list_id: int,
