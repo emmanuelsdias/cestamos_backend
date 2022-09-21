@@ -4,7 +4,7 @@ from fastapi import Depends
 from app.services.user import ABCUserService
 from app.factories.user import get_user_service
 
-from app.dto.user import User, UserCreate, UserAuth
+from app.dto.user import UserSummary, UserCreate, UserAuth
 from typing import List
 
 
@@ -23,7 +23,8 @@ async def save_user(
 ):
     return user_service.save_user(user)
 
-@router.get("/{user_id}", response_model=UserAuth)
+
+@router.get("/{user_id}", response_model=UserSummary)
 async def get_user_by_id(
     user_id: int,
     user_service: ABCUserService = Depends(get_user_service)

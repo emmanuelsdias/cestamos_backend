@@ -8,14 +8,15 @@ class UserCreate(BaseModel):
     password: str
 
 
-class User(OutputBaseModel):
+class UserSummary(OutputBaseModel):
     user_id: int
     username: str
+
+
+class User(UserSummary):
     email: str
 
 
-class UserAuth(OutputBaseModel):
-    user_id: int
-    username: str
-    email: str
+class UserAuth(User):
     token: Union[str, None]
+

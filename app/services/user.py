@@ -4,13 +4,12 @@ from pydantic import parse_obj_as
 
 from app.dal.user import ABCUserDal
 from app.logic.user import hash_password, generate_token
-from app.dto.user import User, UserCreate, UserAuth
+from app.dto.user import UserSummary, UserCreate, UserAuth
 
 from app.models.user import User as UserModel
 
-from app.utils.settings import Settings
-
 from typing import List
+
 
 class ABCUserService():
     @abc.abstractmethod
@@ -22,7 +21,7 @@ class ABCUserService():
         """ Create a user or logs in the user """
     
     @abc.abstractmethod
-    def get_user_by_id(self, user_id: int) -> User:
+    def get_user_by_id(self, user_id: int) -> UserSummary:
         """ Return user with a given id """
 
 
@@ -65,10 +64,10 @@ class UserService(ABCUserService):
         saved_user = self.dal.create_user(user=db_user)
         return UserAuth.from_orm(saved_user)
 
-    def get_user_by_id(self, user_id: int) -> User:
+    def get_user_by_id(self, user_id: int) -> UserSummary:
         user = self.dal.get_user_by_id(user_id)
         if user is None:
             raise HTTPException(
                 status_code=404, detail="User not found"
             )
-        return parse_obj_as(User, user)
+        return UserSummary.from_orm(user)
