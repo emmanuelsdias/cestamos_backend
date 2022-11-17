@@ -50,6 +50,14 @@ class ABCShopListService(UserBasedService):
     def add_item_to_list(self, shop_list_id: int, item: ItemCreate, token: str) -> ShopList:
         """ Adds item to list and return the resulting list """
 
+    @abc.abstractmethod
+    def rename_list(self, shop_list_id: int, new_name: str, token: str) -> ShopList:
+        """ Renames list """
+
+    @abc.abstractmethod
+    def delete_list(self, shop_list_id: int, token: str) -> ShopListSummary:
+        """ Deletes list """
+
 
 
 class ShopListService(ABCShopListService):
@@ -91,6 +99,32 @@ class ShopListService(ABCShopListService):
         )
 
         return shop_list_summary
+
+
+    def construct_shop_list_dto(self, shop_list: ShopListModel) -> ShopList:
+        shop_list_summary = self.construct_shop_list_summary_dto(shop_list)
+
+        items = self.item_dal.get_items_from_list(shop_list.shop_list_id)
+
+        items_dto = [
+            Item(
+                item_id = item.item_id,
+                name = item.name,
+                quantity = item.quantity,
+                was_bought = item.was_bought
+            )
+            for item in items
+        ]
+
+        shop_list_dto = ShopList(
+            shop_list_id = shop_list.shop_list_id,
+            name = shop_list_summary.name,
+            user_lists = shop_list_summary.user_lists,
+            items = items_dto
+        )
+
+        return shop_list_dto
+
 
 
     def check_user_list_validity(self, user_id: int, shop_list_id: int) -> UserListModel:
@@ -225,25 +259,6 @@ class ShopListService(ABCShopListService):
         
         return self.get_shop_list_by_id(shop_list_id, token)
 
-
-    def update_shop_list(self, shop_list_id: int, shop_list: ShopListCreate, token: str) -> ShopList:
-        user = self.check_user_validity(token)
-        current_shop_list = self.dal.get_shop_list_by_id(shop_list_id)
-        if current_shop_list is None:
-            raise HTTPException(
-                status_code=400, detail="ShopList doesn't exist"
-            )
-        if user.user_id != current_shop_list.user_id:
-            self.raise_access_denied_error()
-        db_shop_list = ShopListModel(
-            shop_list_id=shop_list_id,
-            name = shop_list.name,
-            ingredients=shop_list.ingredients,
-            instructions=shop_list.instructions,
-        )
-        saved_shop_list = self.dal.update_shop_list(db_shop_list)
-        return ShopList.from_orm(saved_shop_list)
-
     def delete_shop_list(self, shop_list_id: int, token: str) -> ShopList:
         user = self.check_user_validity(token)
         current_shop_list = self.dal.get_shop_list_by_id(shop_list_id)
@@ -255,3 +270,37 @@ class ShopListService(ABCShopListService):
             self.raise_access_denied_error()
         deleted_shop_list = self.dal.delete_shop_list(shop_list_id)
         return ShopList.from_orm(deleted_shop_list)
+
+    def rename_list(self, shop_list_id: int, new_name: str, token: str) -> ShopList:
+        user = self.check_user_validity(token)
+        shop_list = self.dal.get_shop_list_by_id(shop_list_id)
+
+        if shop_list is None:
+            raise HTTPException(
+                status_code=400, detail="ShopList doesn't exist"
+            )
+
+        self.check_user_list_validity(user.user_id, shop_list_id)
+        
+        shop_list.name = new_name
+        shop_list = self.dal.update_list(shop_list)
+
+        return self.construct_shop_list_dto(shop_list)
+
+
+    def delete_list(self, shop_list_id: int, token: str) -> ShopListSummary:
+        user = self.check_user_validity(token)
+        shop_list = self.dal.get_shop_list_by_id(shop_list_id)
+        if shop_list is None:
+            raise HTTPException(
+                status_code=400, detail="ShopList doesn't exist"
+            )
+        
+        self.check_user_list_adm_validity(user.user_id, shop_list_id)
+
+        # TODO: Deletar todos os itens que pertencem à lista
+        # TODO: Deletar todos os user_lists que pertencem à lista
+        # TODO: Deletar a lista
+
+        return self.construct_shop_list_summary_dto(shop_list)
+
