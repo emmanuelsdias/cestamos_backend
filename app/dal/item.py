@@ -29,9 +29,9 @@ class ABCItemDal():
     def update_item(self, item: Item) -> Item:
         """ Updates item in database """
 
-    # @abc.abstractmethod
-    # def delete_item(self, item_id: int) -> Item:
-    #     """ Deletes a item in database """
+    @abc.abstractmethod
+    def delete_item(self, item_id: int) -> Item:
+        """ Deletes a item in database """
 
 
 class ItemDal(ABCItemDal):
@@ -67,4 +67,12 @@ class ItemDal(ABCItemDal):
             )
         self.db.commit()
         return self.get_item_by_id(item.item_id)
-        
+
+    def delete_item(self, item_id: int) -> Item:
+        deleted_item = self.get_item_by_id(item_id)
+
+        self.db.query(Item).filter(Item.item_id == item_id).\
+            delete()
+       
+        self.db.commit()
+        return deleted_item

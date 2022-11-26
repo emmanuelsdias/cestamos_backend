@@ -293,7 +293,7 @@ class ShopListService(ABCShopListService):
         shop_list = self.dal.get_shop_list_by_id(shop_list_id)
         if shop_list is None:
             raise HTTPException(
-                status_code=400, detail="ShopList doesn't exist"
+                status_code=404, detail="ShopList doesn't exist"
             )
         
         self.check_user_list_adm_validity(user.user_id, shop_list_id)
