@@ -120,8 +120,6 @@ class ShopListDal(ABCShopListDal):
             update(
                 {
                     "name": shop_list.name,
-                    "ingredients": shop_list.ingredients,
-                    "instructions": shop_list.instructions,
                 }
             )
         self.db.commit()

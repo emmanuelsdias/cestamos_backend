@@ -20,9 +20,16 @@ class UserList(OutputBaseModel):
     is_nutritionist: bool
 
 
-class ItemCreate(OutputBaseModel):
+class ItemCreate(BaseModel):
     name: str
     quantity: str
+
+
+class ItemEdit(BaseModel):
+    item_id: int
+    name: str
+    quantity: str
+    was_bought: bool
 
 
 class Item(OutputBaseModel):
@@ -37,6 +44,10 @@ class ShopListCreate(BaseModel):
     user_ids: List[int]
 
     is_template: bool
+
+
+class ShopListEdit(BaseModel):
+    name: str
 
 
 class ShopListSummary(OutputBaseModel):

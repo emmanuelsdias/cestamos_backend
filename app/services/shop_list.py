@@ -7,7 +7,7 @@ from app.dal.user import ABCUserDal
 from app.dal.friendship import ABCFriendshipDal
 from app.dal.item import ABCItemDal
 
-from app.dto.shop_list import ShopList, ShopListCreate, ShopListSummary
+from app.dto.shop_list import ShopList, ShopListCreate, ShopListSummary, ShopListEdit
 from app.dto.shop_list import UserList, UserListCreate
 from app.dto.shop_list import Item, ItemCreate
 
@@ -271,21 +271,21 @@ class ShopListService(ABCShopListService):
         deleted_shop_list = self.dal.delete_shop_list(shop_list_id)
         return ShopList.from_orm(deleted_shop_list)
 
-    def rename_list(self, shop_list_id: int, new_name: str, token: str) -> ShopList:
+    def rename_list(self, shop_list_id: int, shop_list_data: ShopListEdit, token: str) -> ShopListSummary:
         user = self.check_user_validity(token)
         shop_list = self.dal.get_shop_list_by_id(shop_list_id)
 
         if shop_list is None:
             raise HTTPException(
-                status_code=400, detail="ShopList doesn't exist"
+                status_code=404, detail="ShopList doesn't exist"
             )
 
         self.check_user_list_validity(user.user_id, shop_list_id)
         
-        shop_list.name = new_name
+        shop_list.name = shop_list_data.name
         shop_list = self.dal.update_list(shop_list)
 
-        return self.construct_shop_list_dto(shop_list)
+        return self.construct_shop_list_summary_dto(shop_list)
 
 
     def delete_list(self, shop_list_id: int, token: str) -> ShopListSummary:

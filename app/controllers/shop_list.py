@@ -4,7 +4,7 @@ from fastapi import Depends
 from app.services.shop_list import ABCShopListService
 from app.factories.shop_list import get_shop_list_service
 
-from app.dto.shop_list import ShopList, ShopListCreate, ShopListSummary
+from app.dto.shop_list import ShopList, ShopListCreate, ShopListSummary, ShopListEdit
 from app.dto.shop_list import UserList, UserListCreate, UserListStatus
 from app.dto.shop_list import Item, ItemCreate
 
@@ -37,14 +37,14 @@ async def get_shop_list_by_id(
     return shop_list_service.get_shop_list_by_id(shop_list_id, token)
 
 
-@router.put("/{shop_list_id}", response_model=ShopList)
+@router.put("/{shop_list_id}", response_model=ShopListSummary)
 async def rename_list(
     shop_list_id: int,
-    new_name: str,
+    shop_list_data: ShopListEdit,
     token: str = None,
     shop_list_service: ABCShopListService = Depends(get_shop_list_service)
 ):
-    return shop_list_service.rename_list(shop_list_id, new_name, token)
+    return shop_list_service.rename_list(shop_list_id, shop_list_data, token)
 
 
 @router.delete("/{shop_list_id}")
@@ -67,7 +67,7 @@ async def add_users_to_list(
     
 
 @router.post("/{shop_list_id}/item", response_model=ShopList)
-async def add_users_to_list(
+async def add_item_to_list(
     shop_list_id: int,
     item: ItemCreate,
     token: str = None,
