@@ -10,6 +10,8 @@ from app.dto.shop_list import Item, ItemEdit
 
 
 from app.models.user import User as UserModel
+from app.models.item import Item as ItemModel
+from app.models.user_list import UserList as UserListModel
 
 from app.services.user_based_service import UserBasedService
 
@@ -40,12 +42,37 @@ class ItemService(ABCItemService):
         self.shop_list_dal = shop_list_dal
 
 
+    def construct_item_dto(self, item: ItemModel) -> Item:
+        return Item(
+            item_id = item.item_id,
+            name = item.name,
+            quantity = item.quantity,
+            was_bought = item.was_bought
+        )
+
+
+    def check_user_list_validity(self, user_id: int, shop_list_id: int) -> UserListModel:
+        user_list = self.shop_list_dal.get_user_list_by_user_id(shop_list_id, user_id)
+        if user_list is None:
+            self.raise_access_denied_error()
+        return user_list
+
+
     def edit_item(self, token: str, item_data: ItemEdit) -> Item:
         user = self.check_user_validity(token)
+        item = self.dal.get_item_by_id(item_data.item_id)
 
-        return Item(
-            item_id = 123,
-            name = "aaaaa",
-            quantity = "2 kg",
-            was_bought = False,
-        )
+        if item is None:
+            raise HTTPException(
+                status_code=404, detail="Item doesn't exist"
+            )
+
+        self.check_user_list_validity(user.user_id, item.shop_list_id)
+
+        item.name = item_data.name
+        item.quantity = item_data.quantity
+        item.was_bought = item_data.was_bought
+
+        item = self.dal.update_item(item)
+
+        return self.construct_item_dto(item)

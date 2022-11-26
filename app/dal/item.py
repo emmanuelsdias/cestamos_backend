@@ -25,9 +25,9 @@ class ABCItemDal():
     def create_item(self, item: Item) -> Item:
         """Creates a new item in database"""
 
-    # @abc.abstractmethod
-    # def update_item(self, item: Item) -> Item:
-    #     """ Updates item in database """
+    @abc.abstractmethod
+    def update_item(self, item: Item) -> Item:
+        """ Updates item in database """
 
     # @abc.abstractmethod
     # def delete_item(self, item_id: int) -> Item:
@@ -53,3 +53,18 @@ class ItemDal(ABCItemDal):
         self.db.commit()
         self.db.refresh(item)
         return item
+
+    def update_item(self, item: Item) -> Item:
+        self.db.query(Item).filter(
+            Item.item_id == item.item_id
+        ).\
+            update(
+                {
+                    "name": item.name,
+                    "quantity": item.quantity,
+                    "was_bought": item.was_bought
+                }
+            )
+        self.db.commit()
+        return self.get_item_by_id(item.item_id)
+        

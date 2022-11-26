@@ -12,6 +12,7 @@ router = APIRouter()
 
 @router.put("/{item_id}", response_model=Item)
 async def edit_item(
+    item_id: int,
     item_data: ItemEdit,
     token: str = None,
     item_service: ABCItemService = Depends(get_item_service)
