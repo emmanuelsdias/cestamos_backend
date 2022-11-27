@@ -5,6 +5,7 @@ from sqlalchemy import update, and_
 
 from app.models.shop_list import ShopList
 from app.models.user_list import UserList
+from app.models.item import Item
 
 from typing import List
 
@@ -27,13 +28,12 @@ class ABCShopListDal():
         """Creates a new shop_list in database"""
 
     @abc.abstractmethod
-    def create_user_list(self, user_list: UserList) -> UserList:
-        """Adds user to list"""
-
-    @abc.abstractmethod
     def update_list(self, shop_list: ShopList) -> ShopList:
         """ Updates list """
 
+    @abc.abstractmethod
+    def delete_shop_list(self, shop_list_id: int) -> ShopList:
+        """Deletes list"""
 
 class ShopListDal(ABCShopListDal):
 
@@ -51,55 +51,11 @@ class ShopListDal(ABCShopListDal):
     def get_shop_list_by_id(self, shop_list_id: int) -> ShopList:
         return self.db.query(ShopList).filter(ShopList.shop_list_id == shop_list_id).first()
 
-    def get_user_list_by_user_id(self, shop_list_id: int, user_id: int) -> UserList:
-        user_list = self.db.query(UserList).filter(
-            and_(
-                UserList.shop_list_id == shop_list_id,
-                UserList.user_id == user_id
-            )
-        ).first()
-        return user_list
-
-
-    def get_user_list_by_user_list_id(self, user_list_id: int) -> UserList:
-        user_list = self.db.query(UserList).filter(
-            UserList.user_list_id == user_list_id
-        ).first()
-        return user_list
-
-
-    def get_user_lists_by_shop_list_id(self, shop_list_id: int) -> List[UserList]:
-        user_lists = self.db.query(UserList).filter(
-            UserList.shop_list_id == shop_list_id
-        ).all()
-        return user_lists
-
-
     def create_shop_list(self, shop_list: ShopList) -> ShopList:
         self.db.add(shop_list)
         self.db.commit()
         self.db.refresh(shop_list)
         return shop_list
-
-    def create_user_list(self, user_list: UserList) -> UserList:
-        self.db.add(user_list)
-        self.db.commit()
-        self.db.refresh(user_list)
-        return user_list
-
-    def update_user_list(self, user_list: UserList) -> UserList:
-        self.db.query(UserList).filter(
-            UserList.user_list_id == user_list.user_list_id
-        ).\
-            update(
-                {
-                    "is_adm" : user_list.is_adm,
-                    "is_nutritionist" : user_list.is_nutritionist
-                }
-            )
-        self.db.commit()
-        return self.get_user_list_by_user_list_id(user_list.user_list_id)
-
 
     def update_list(self, shop_list: ShopList) -> ShopList:
         self.db.query(ShopList).filter(
@@ -112,3 +68,16 @@ class ShopListDal(ABCShopListDal):
             )
         self.db.commit()
         return self.get_shop_list_by_id(shop_list.shop_list_id)
+
+    def delete_shop_list(self, shop_list_id: int):
+        deleted_shop_list = self.get_shop_list_by_id(shop_list_id)
+
+        self.db.query(Item).filter(Item.shop_list_id == shop_list_id).\
+            delete()
+        self.db.query(UserList).filter(UserList.shop_list_id == shop_list_id).\
+            delete()
+        self.db.query(ShopList).filter(ShopList.shop_list_id == shop_list_id).\
+            delete()
+       
+        self.db.commit()
+        return deleted_shop_list

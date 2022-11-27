@@ -21,6 +21,10 @@ class ABCUserListDal():
         """ Get users from list """
 
     @abc.abstractmethod
+    def create_user_list(self, user_list: UserList) -> UserList:
+        """Adds user to list"""
+
+    @abc.abstractmethod
     def update_user_list(self, user_list: UserList) -> UserList:
         """ Updates user list """
 
@@ -54,6 +58,12 @@ class UserListDal(ABCUserListDal):
             UserList.shop_list_id == shop_list_id
         ).all()
         return user_lists
+
+    def create_user_list(self, user_list: UserList) -> UserList:
+        self.db.add(user_list)
+        self.db.commit()
+        self.db.refresh(user_list)
+        return user_list
 
     def update_user_list(self, user_list: UserList) -> UserList:
         self.db.query(UserList).filter(

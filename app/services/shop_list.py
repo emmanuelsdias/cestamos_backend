@@ -42,10 +42,6 @@ class ABCShopListService(UserBasedService):
     @abc.abstractmethod
     def add_users_to_list(self, shop_list_id: int, user_lists: List[UserListCreate], token: str) -> List[UserList]:
         """ Adds users to list """
-
-    @abc.abstractmethod
-    def change_user_status(shop_list_id: int, user_id: int, user_list_status, token: str) -> UserList:
-        """ Set user to adm or to nutritionist """
     
     @abc.abstractmethod
     def add_item_to_list(self, shop_list_id: int, item: ItemCreate, token: str) -> ShopList:
@@ -195,14 +191,14 @@ class ShopListService(ABCShopListService):
                 user_id = user_id,
                 shop_list_id = shop_list_id
             )
-            self.dal.create_user_list(user_list_db)
+            self.user_list_dal.create_user_list(user_list_db)
 
         user_list_db = UserListModel(
             user_id = user.user_id,
             shop_list_id = shop_list_id,
             is_adm = True
         )
-        self.dal.create_user_list(user_list_db)  
+        self.user_list_dal.create_user_list(user_list_db)  
         
         created_shop_list_dto = self.construct_shop_list_summary_dto(created_shop_list)
         return created_shop_list_dto
@@ -224,7 +220,7 @@ class ShopListService(ABCShopListService):
                 shop_list_id = shop_list_id,
                 is_nutritionist = user_list.is_nutritionist
             )
-            self.dal.create_user_list(user_list_db)
+            self.user_list_dal.create_user_list(user_list_db)
         
         user_lists = self.user_list_dal.get_user_lists_by_shop_list_id(shop_list_id)
 
@@ -233,22 +229,6 @@ class ShopListService(ABCShopListService):
         ]
 
         return user_lists_dto
-
-    
-    def change_user_status(self, shop_list_id: int, user_id: int, user_list_status, token: str) -> UserList:
-        user = self.check_user_validity(token)
-        request_user_list = self.check_user_list_adm_validity(user.user_id, shop_list_id)
-
-        user_list = self.user_list_dal.get_user_list_by_user_id(shop_list_id, user_id)
-        if user_list_status.is_adm is not None:
-            if request_user_list.user_id != user_list.user_id:
-                user_list.is_adm = user_list_status.is_adm
-        if user_list_status.is_nutritionist is not None:
-            user_list.is_nutritionist = user_list_status.is_nutritionist
-
-        updated_user_list = self.dal.update_user_list(user_list)
-        return self.construct_user_list_dto(updated_user_list)
-
 
     def add_item_to_list(self, shop_list_id: int, item: ItemCreate, token: str) -> ShopList:
         user = self.check_user_validity(token)
@@ -261,18 +241,6 @@ class ShopListService(ABCShopListService):
         self.item_dal.create_item(item_db)
         
         return self.get_shop_list_by_id(shop_list_id, token)
-
-    def delete_shop_list(self, shop_list_id: int, token: str) -> ShopList:
-        user = self.check_user_validity(token)
-        current_shop_list = self.dal.get_shop_list_by_id(shop_list_id)
-        if current_shop_list is None:
-            raise HTTPException(
-                status_code=400, detail="ShopList doesn't exist"
-            )
-        if user.user_id != current_shop_list.user_id:
-            self.raise_access_denied_error()
-        deleted_shop_list = self.dal.delete_shop_list(shop_list_id)
-        return ShopList.from_orm(deleted_shop_list)
 
     def rename_list(self, shop_list_id: int, shop_list_data: ShopListEdit, token: str) -> ShopListSummary:
         user = self.check_user_validity(token)
@@ -300,10 +268,6 @@ class ShopListService(ABCShopListService):
             )
         
         self.check_user_list_adm_validity(user.user_id, shop_list_id)
-
-        # TODO: Deletar todos os itens que pertencem à lista
-        # TODO: Deletar todos os user_lists que pertencem à lista
-        # TODO: Deletar a lista
-
+        self.dal.delete_shop_list(shop_list.shop_list_id)
         return self.construct_shop_list_summary_dto(shop_list)
 

@@ -88,8 +88,10 @@ class UserListService(ABCUserListService):
                 status_code=404, detail="User List doesn't exist"
             )
         if user.user_id == user_list.user_id:
-            pass
+            users_from_same_list = self.dal.get_user_lists_by_shop_list_id(user_list.shop_list_id)
+            if len(users_from_same_list) == 1:
+                self.shop_list_dal.delete_shop_list(user_list.shop_list_id)
         else:
             self.check_user_list_adm_validity(user.user_id, user_list.shop_list_id)
-        self.dal.delete_user_list(user_list.user_list_id)
+            self.dal.delete_user_list(user_list.user_list_id)
         return self.construct_user_list_dto(user_list)
