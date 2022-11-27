@@ -4,7 +4,7 @@ from pydantic import parse_obj_as
 
 from app.dal.user import ABCUserDal
 from app.logic.user import hash_password, generate_token
-from app.dto.user import UserSummary, UserCreate, UserAuth
+from app.dto.user import UserSummary, UserCreate, UserAuth, UserEdit, User
 
 from app.models.user import User as UserModel
 
@@ -71,3 +71,16 @@ class UserService(ABCUserService):
                 status_code=404, detail="User not found"
             )
         return UserSummary.from_orm(user)
+    
+    def edit_user(self, token: str, user_data: UserEdit) -> User:
+        user = self.check_user_validity(token)
+        if user.user_id != user_data.user_id:
+            raise HTTPException(
+                status_code= 403, detail="Forbidden user"
+            )
+        user.username = user_data.username
+        user.password = hash_password(user_data.password)
+
+        user = self.dal.update_user(user)
+
+        return self.construct_user_dto(user)

@@ -7,16 +7,18 @@ class UserCreate(BaseModel):
     email: str
     password: str
 
-
-class UserSummary(OutputBaseModel):
+class User(OutputBaseModel):
     user_id: int
     username: str
-
-
-class User(UserSummary):
     email: str
 
-
-class UserAuth(User):
+class UserAuth(OutputBaseModel):
+    user_id: int
+    username: str
+    email: str
     token: Union[str, None]
 
+class UserEdit(BaseModel):
+    user_id: int
+    username: str
+    password: str    

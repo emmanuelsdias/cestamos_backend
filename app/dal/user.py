@@ -62,3 +62,16 @@ class UserDal(ABCUserDal):
         self.db.commit()
         self.db.refresh(user)
         return self.get_user_by_id(user.user_id)
+    
+    def update_user(self, user: User) -> User:
+        self.db.query(User).filter(
+            User.user_if == user.user_id
+        ).\
+            update(
+                {
+                    "username" : user.username,
+                    "hashed_password" : user.password
+                }
+            )
+        self.db.commit()
+        return self.get_user_by_id(user.user_id)
