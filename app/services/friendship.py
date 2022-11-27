@@ -40,15 +40,16 @@ class FriendshipService(ABCFriendshipService):
         self.dal = friendship_dal
 
     
-    def construct_friendship_dto(self, friendship: FriendshipModel) -> Friendship:
-        user1 = self.user_dal.get_user_by_id(friendship.user_id1)
-        user2 = self.user_dal.get_user_by_id(friendship.user_id2)
+    def construct_friendship_dto(self, user: UserModel, friendship: FriendshipModel) -> Friendship:
+        if user.user_id == friendship.user_id1:
+            user_friend = self.user_dal.get_user_by_id(friendship.user_id2)
+        else:
+            user_friend = self.user_dal.get_user_by_id(friendship.user_id1)
+        
         friendship_dto = Friendship(
             friendship_id = friendship.friendship_id,
-            user_id1 = user1.user_id,
-            username1 = user1.username,
-            user_id2 = user2.user_id,
-            username2 = user2.username,
+            user_id = user_friend.user_id,
+            username = user_friend.username,
         )
         return friendship_dto
 
@@ -56,7 +57,7 @@ class FriendshipService(ABCFriendshipService):
     def get_friendships(self, token) -> List[Friendship]:
         user = self.check_user_validity(token)
         friendships = self.dal.get_friendships_from_user(user.user_id)
-        friendships_res = [self.construct_friendship_dto(friendship) for friendship in friendships]
+        friendships_res = [self.construct_friendship_dto(user, friendship) for friendship in friendships]
         return friendships_res
 
 
@@ -73,4 +74,4 @@ class FriendshipService(ABCFriendshipService):
             )
         deleted_friendship = self.dal.delete_friendship(friendship_id)
         
-        return self.construct_friendship_dto(deleted_friendship)
+        return self.construct_friendship_dto(user, deleted_friendship)

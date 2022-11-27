@@ -1,8 +1,10 @@
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
+from app.dal.item import ItemDal, ABCItemDal
 from app.dal.user import UserDal, ABCUserDal
 from app.dal.recipe import RecipeDal, ABCRecipeDal
+from app.dal.shop_list import ShopListDal, ABCShopListDal
 from app.dal.invitation import InvitationDal, ABCInvitationDal
 from app.dal.friendship import FriendshipDal, ABCFriendshipDal
 
@@ -27,6 +29,17 @@ def get_recipe_dal(
     finally:
         pass
 
+
+def get_shop_list_dal(
+    db: Session = Depends(get_db)
+) -> ABCShopListDal:
+    dal = ShopListDal(db)
+    try:
+        yield dal
+    finally:
+        pass
+
+
 def get_invitation_dal(
     db: Session = Depends(get_db)
 ) -> ABCInvitationDal:
@@ -41,6 +54,16 @@ def get_friendship_dal(
     db: Session = Depends(get_db)
 ) -> ABCFriendshipDal:
     dal = FriendshipDal(db)
+    try:
+        yield dal
+    finally:
+        pass
+
+
+def get_item_dal(
+    db: Session = Depends(get_db)
+) -> ABCItemDal:
+    dal = ItemDal(db)
     try:
         yield dal
     finally:
