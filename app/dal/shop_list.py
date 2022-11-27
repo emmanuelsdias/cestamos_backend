@@ -23,18 +23,6 @@ class ABCShopListDal():
         """Gets the shop_list in database with the given id"""
 
     @abc.abstractmethod
-    def get_user_list_by_user_id(self, shop_list_id: int, user_id: int) -> UserList:
-        """Gets the shop_list in database with the given id"""
-
-    @abc.abstractmethod
-    def get_user_list_by_user_list_id(self, user_list_id: int) -> UserList:
-        """Gets the user_list in database with the given id"""
-
-    @abc.abstractmethod
-    def get_user_lists_by_shop_list_id(self, shop_list_id: int) -> List[UserList]:
-        """ Get users from list """
-
-    @abc.abstractmethod
     def create_shop_list(self, shop_list: ShopList) -> ShopList:
         """Creates a new shop_list in database"""
 

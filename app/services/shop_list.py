@@ -6,6 +6,7 @@ from app.dal.shop_list import ABCShopListDal
 from app.dal.user import ABCUserDal
 from app.dal.friendship import ABCFriendshipDal
 from app.dal.item import ABCItemDal
+from app.dal.user_list import ABCUserListDal
 
 from app.dto.shop_list import ShopList, ShopListCreate, ShopListSummary, ShopListEdit
 from app.dto.shop_list import UserList, UserListCreate
@@ -68,10 +69,12 @@ class ShopListService(ABCShopListService):
         friendship_dal: ABCFriendshipDal,
         item_dal: ABCItemDal,
         user_dal: ABCUserDal,
+        user_list_dal: ABCUserListDal
     ):
         super().__init__(user_dal)
         self.friendship_dal = friendship_dal
         self.item_dal = item_dal
+        self.user_list_dal = user_list_dal
         self.dal = shop_list_dal
 
 
@@ -87,7 +90,7 @@ class ShopListService(ABCShopListService):
 
 
     def construct_shop_list_summary_dto(self, shop_list: ShopListModel) -> ShopListSummary:
-        user_lists = self.dal.get_user_lists_by_shop_list_id(shop_list.shop_list_id)
+        user_lists = self.user_list_dal.get_user_lists_by_shop_list_id(shop_list.shop_list_id)
         user_lists_dto = [
             self.construct_user_list_dto(user_list) for user_list in user_lists
         ]
@@ -128,7 +131,7 @@ class ShopListService(ABCShopListService):
 
 
     def check_user_list_validity(self, user_id: int, shop_list_id: int) -> UserListModel:
-        user_list = self.dal.get_user_list_by_user_id(shop_list_id, user_id)
+        user_list = self.user_list_dal.get_user_list_by_user_id(shop_list_id, user_id)
         if user_list is None:
             self.raise_access_denied_error()
         return user_list
@@ -151,7 +154,7 @@ class ShopListService(ABCShopListService):
         user = self.check_user_validity(token)
 
         shop_list = self.dal.get_shop_list_by_id(shop_list_id)
-        user_lists = self.dal.get_user_lists_by_shop_list_id(shop_list_id)
+        user_lists = self.user_list_dal.get_user_lists_by_shop_list_id(shop_list_id)
 
         if not (user.user_id in [u.user_id for u in user_lists]):
             self.raise_access_denied_error()
@@ -208,7 +211,7 @@ class ShopListService(ABCShopListService):
     def add_users_to_list(self, shop_list_id: int, user_lists: List[UserListCreate], token: str) -> List[UserList]:
         user = self.check_user_validity(token)
         self.check_user_list_adm_validity(user.user_id, shop_list_id)
-        current_user_lists = self.dal.get_user_lists_by_shop_list_id(shop_list_id)
+        current_user_lists = self.user_list_dal.get_user_lists_by_shop_list_id(shop_list_id)
         current_user_list_ids = [u.user_id for u in current_user_lists]
 
         for user_list in user_lists:
@@ -223,7 +226,7 @@ class ShopListService(ABCShopListService):
             )
             self.dal.create_user_list(user_list_db)
         
-        user_lists = self.dal.get_user_lists_by_shop_list_id(shop_list_id)
+        user_lists = self.user_list_dal.get_user_lists_by_shop_list_id(shop_list_id)
 
         user_lists_dto = [
             self.construct_user_list_dto(user_list) for user_list in user_lists
@@ -236,7 +239,7 @@ class ShopListService(ABCShopListService):
         user = self.check_user_validity(token)
         request_user_list = self.check_user_list_adm_validity(user.user_id, shop_list_id)
 
-        user_list = self.dal.get_user_list_by_user_id(shop_list_id, user_id)
+        user_list = self.user_list_dal.get_user_list_by_user_id(shop_list_id, user_id)
         if user_list_status.is_adm is not None:
             if request_user_list.user_id != user_list.user_id:
                 user_list.is_adm = user_list_status.is_adm
