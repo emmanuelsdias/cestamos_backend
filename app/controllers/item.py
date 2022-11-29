@@ -18,3 +18,12 @@ async def edit_item(
     item_service: ABCItemService = Depends(get_item_service)
 ):
     return item_service.edit_item(token, item_data)
+
+
+@router.delete("/{item_id}")
+async def delete_item(
+    item_id: int,
+    token: str = None,
+    item_service: ABCItemService = Depends(get_item_service)
+):
+    return item_service.delete_item(token, item_id)

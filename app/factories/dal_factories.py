@@ -5,6 +5,7 @@ from app.dal.item import ItemDal, ABCItemDal
 from app.dal.user import UserDal, ABCUserDal
 from app.dal.recipe import RecipeDal, ABCRecipeDal
 from app.dal.shop_list import ShopListDal, ABCShopListDal
+from app.dal.user_list import UserListDal, ABCUserListDal
 from app.dal.invitation import InvitationDal, ABCInvitationDal
 from app.dal.friendship import FriendshipDal, ABCFriendshipDal
 
@@ -70,4 +71,12 @@ def get_item_dal(
         pass
 
 
+def get_user_list_dal(
+    db: Session = Depends(get_db)
+) -> ABCUserListDal:
+    dal = UserListDal(db)
+    try:
+        yield dal
+    finally:
+        pass
 

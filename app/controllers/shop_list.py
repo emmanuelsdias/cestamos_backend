@@ -74,14 +74,3 @@ async def add_item_to_list(
     shop_list_service: ABCShopListService = Depends(get_shop_list_service)
 ):
     return shop_list_service.add_item_to_list(shop_list_id, item, token)
-
-
-@router.put("/{shop_list_id}/user/{user_id}", response_model=UserList)
-async def change_user_status(
-    shop_list_id: int,
-    user_id: int,
-    user_list_status: UserListStatus,
-    token: str = None,
-    shop_list_service: ABCShopListService = Depends(get_shop_list_service)
-):
-    return shop_list_service.change_user_status(shop_list_id, user_id, user_list_status, token)
