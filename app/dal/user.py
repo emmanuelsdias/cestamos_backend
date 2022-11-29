@@ -65,7 +65,7 @@ class UserDal(ABCUserDal):
     
     def update_user(self, user: User) -> User:
         self.db.query(User).filter(
-            User.user_if == user.user_id
+            User.user_id == user.user_id
         ).\
             update(
                 {
@@ -75,3 +75,12 @@ class UserDal(ABCUserDal):
             )
         self.db.commit()
         return self.get_user_by_id(user.user_id)
+
+    def delete_user(self, user_id: int) -> User:
+        deleted_user = self.get_user_by_id(user_id)
+
+        self.db.query(User).filter(User.user_id == user_id).\
+            delete()
+       
+        self.db.commit()
+        return deleted_user

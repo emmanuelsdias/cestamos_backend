@@ -24,6 +24,9 @@ class UserAuth(OutputBaseModel):
     token: Union[str, None]
 
 class UserEdit(BaseModel):
-    user_id: int
     username: str
-    password: str    
+    old_password: str
+    password: str
+
+class UserPasswordCheck(BaseModel):
+    password: str

@@ -4,7 +4,7 @@ from fastapi import Depends
 from app.services.user import ABCUserService
 from app.factories.user import get_user_service
 
-from app.dto.user import User, UserCreate, UserAuth, UserEdit
+from app.dto.user import User, UserCreate, UserAuth, UserEdit, UserPasswordCheck
 from typing import List
 
 
@@ -30,3 +30,11 @@ async def edit_user(
     user_service: ABCUserService = Depends(get_user_service)
 ):
     return user_service.edit_user(token, user_data)
+
+@router.delete("/", response_model = User)
+async def delete_user(
+    user_data: UserPasswordCheck,
+    token: str = None,
+    user_service: ABCUserService = Depends(get_user_service)
+):
+    return user_service.delete_user(token, user_data)
