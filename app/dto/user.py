@@ -2,6 +2,11 @@ from typing import List, Union
 from pydantic import BaseModel
 from app.dto.output_dto import OutputBaseModel
 
+class UserSummary(BaseModel):
+    username: str
+    email: str
+    password: str
+
 class UserCreate(BaseModel):
     username: Union[str, None]
     email: str

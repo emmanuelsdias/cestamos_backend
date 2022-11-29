@@ -83,4 +83,4 @@ class UserService(ABCUserService):
 
         user = self.dal.update_user(user)
 
-        return self.construct_user_dto(user)
+        return self.construct_user_dto

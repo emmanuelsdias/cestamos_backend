@@ -25,7 +25,6 @@ async def save_user(
 
 @router.put("/", response_model = User)
 async def edit_user(
-    user_id: int,
     user_data: UserEdit,
     token: str = None,
     user_service: ABCUserService = Depends(get_user_service)
