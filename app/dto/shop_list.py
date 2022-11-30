@@ -14,6 +14,7 @@ class UserListStatus(BaseModel):
 
 
 class UserList(OutputBaseModel):
+    user_list_id: int
     user_id: int
     username: str
     is_adm: bool

@@ -80,7 +80,8 @@ class ShopListService(ABCShopListService):
             user_id = user.user_id,
             username = user.username,
             is_adm = user_list.is_adm,
-            is_nutritionist = user_list.is_nutritionist
+            is_nutritionist = user_list.is_nutritionist,
+            user_list_id = user_list.user_list_id
         )
         return user_list_dto
 
