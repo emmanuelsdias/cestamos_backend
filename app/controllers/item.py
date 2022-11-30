@@ -17,10 +17,10 @@ async def edit_item(
     token: str = None,
     item_service: ABCItemService = Depends(get_item_service)
 ):
-    return item_service.edit_item(token, item_data)
+    return item_service.edit_item(token, item_data, item_id)
 
 
-@router.delete("/{item_id}")
+@router.delete("/{item_id}", response_model=Item)
 async def delete_item(
     item_id: int,
     token: str = None,

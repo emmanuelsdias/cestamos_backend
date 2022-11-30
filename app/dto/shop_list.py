@@ -26,7 +26,6 @@ class ItemCreate(BaseModel):
 
 
 class ItemEdit(BaseModel):
-    item_id: int
     name: str
     quantity: str
     was_bought: bool
