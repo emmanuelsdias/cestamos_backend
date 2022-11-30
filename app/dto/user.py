@@ -7,10 +7,11 @@ class UserSummary(BaseModel):
     email: str
     password: str
 
-class UserCreate(BaseModel):
+class UserSign(BaseModel):
     username: Union[str, None]
     email: str
     password: str
+    new_user: bool
 
 class User(OutputBaseModel):
     user_id: int

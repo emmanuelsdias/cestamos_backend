@@ -4,7 +4,7 @@ from pydantic import parse_obj_as
 
 from app.dal.user import ABCUserDal
 from app.logic.user import hash_password, generate_token
-from app.dto.user import UserSummary, UserCreate, UserAuth, UserEdit, User, UserPasswordCheck
+from app.dto.user import UserSummary, UserSign, UserAuth, UserEdit, User, UserPasswordCheck
 
 from app.models.user import User as UserModel
 
@@ -19,8 +19,12 @@ class ABCUserService(UserBasedService):
         """ Returns all users """
     
     @abc.abstractmethod
-    def save_user(self, user) -> UserAuth:
-        """ Create a user or logs in the user """
+    def save_user(self, user: UserSign) -> UserAuth:
+        """ Create a user """
+
+    @abc.abstractmethod
+    def log_in_user(self, user: UserSign) -> UserAuth:
+        """ Logs in the user """
     
     @abc.abstractmethod
     def get_user_by_id(self, user_id: int) -> UserSummary:
@@ -45,27 +49,24 @@ class UserService(ABCUserService):
     def get_all_users(self) -> List[UserAuth]:
         return parse_obj_as(List[UserAuth], self.user_dal.get_users())
 
-    def save_user(self, user: UserCreate) -> UserAuth:
+    def save_user(self, user: UserSign) -> UserAuth:
         current_user = self.user_dal.get_user_by_email(user.email)
-        hashed_password = hash_password(user.password)
-        token = generate_token()
-
-        #TODO: empty email not allowed
 
         if current_user:
-            if current_user.hashed_password != hashed_password:
-                raise HTTPException(
-                    status_code=403, detail="Wrong password"
-                )
-            db_user = current_user
-            db_user.token = token
-            saved_user = self.user_dal.update_user_auth(db_user)
-            return UserAuth.from_orm(saved_user)
-
+            raise HTTPException(
+                status_code=400, detail="Email is already in use"
+            )
+        if user.email is None:
+            raise HTTPException(
+                status_code=400, detail="Email is necessary"
+            )
         if user.username is None:
             raise HTTPException(
                 status_code=400, detail="Username is necessary"
             )
+
+        hashed_password = hash_password(user.password)
+        token = generate_token()
         db_user = UserModel(
             email=user.email, 
             hashed_password=hashed_password,
@@ -74,6 +75,28 @@ class UserService(ABCUserService):
         )
         saved_user = self.user_dal.create_user(user=db_user)
         return UserAuth.from_orm(saved_user)
+
+    def log_in_user(self, user: UserSign) -> UserAuth:
+        current_user = self.user_dal.get_user_by_email(user.email)
+        if current_user is None:
+            raise HTTPException(
+                status_code=404, detail="User not found"
+            )
+        hashed_password = hash_password(user.password)
+        if hashed_password != current_user.hashed_password:
+            raise HTTPException(
+                status_code=403, detail="Wrong password"
+            )
+        token = generate_token()
+        db_user = UserModel(
+            user_id=current_user.user_id,
+            email=current_user.email, 
+            hashed_password=current_user.hashed_password,
+            username=current_user.username,
+            token=token,
+        )
+        logged_user = self.user_dal.update_user_auth(user=db_user)
+        return UserAuth.from_orm(logged_user)
 
     def get_user_by_id(self, user_id: int) -> UserSummary:
         user = self.user_dal.get_user_by_id(user_id)

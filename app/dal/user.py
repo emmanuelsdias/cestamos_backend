@@ -56,11 +56,15 @@ class UserDal(ABCUserDal):
         return user
 
     def update_user_auth(self, user: User) -> User:
-        stmt = update(User).where(User.user_id == user.user_id).values(token=user.token).\
-            execution_options(synchronize_session="fetch")
-        self.db.execute(stmt)
+        self.db.query(User).filter(
+            User.user_id == user.user_id
+        ).\
+            update(
+                {
+                    "token" : user.token
+                }
+            )
         self.db.commit()
-        self.db.refresh(user)
         return self.get_user_by_id(user.user_id)
     
     def update_user(self, user: User) -> User:
