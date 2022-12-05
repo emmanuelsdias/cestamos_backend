@@ -1,12 +1,12 @@
 # Cestamos!
 
-This is a college midterm project CES-28: Software Engineering Fundamentals, in ITA (Instituto Tecnológico de Aeronáutica, Brazil). "Cestamos!" is an mobile app developed by five ITA students: Ariel Claudino ([`@asclaudino`](https://github.com/asclaudino)), Bernardo Hoffmann da Silva ([`@BerHoffmann`](https://github.com/BerHoffmann)), Emmanuel Dias ([`@emmanuelsdias`](https://github.com/emmanuelsdias)), Eric Guerra Ribeiro ([`@Eric-Guerra-Ribeiro`](https://github.com/Eric-Guerra-Ribeiro)) and Gabriel Gandour ([`@GaGandour`](https://github.com/GaGandour)).
+This is a college project in python and dart for the subject CES-28: Software Engineering Fundamentals, in ITA (Instituto Tecnológico de Aeronáutica, Brazil). "Cestamos!" is an mobile app developed by five ITA students: Ariel Claudino ([`@asclaudino`](https://github.com/asclaudino)), Bernardo Hoffmann da Silva ([`@BerHoffmann`](https://github.com/BerHoffmann)), Emmanuel Dias ([`@emmanuelsdias`](https://github.com/emmanuelsdias)), Eric Guerra Ribeiro ([`@Eric-Guerra-Ribeiro`](https://github.com/Eric-Guerra-Ribeiro)) and Gabriel Gandour ([`@GaGandour`](https://github.com/GaGandour)).
 
 ## How to Execute
 
 ### By Cloning the Repos
 
-After downloading the backend's repository, download also the frontend repository (which can be found at [cestamos_frontend](https://github.com/emmanuelsdias/https://github.com/emmanuelsdias/cestamos_frontend).) To run the app, you first have to setup the backend by running `make start` command inside the `cestamos_backend` repo folder. After that, run the `make start` command inside the `cestamos_frontend` folder. 
+After downloading the backend's repository, download also the frontend repository (which can be found at [cestamos_frontend](https://github.com/emmanuelsdias/cestamos_frontend).) To run the app, you first have to setup the backend by running `make start` command inside the `cestamos_backend` repo folder. After that, run the `make start` command inside the `cestamos_frontend` folder. 
 
 ### Or Downloading the App (soon?)
 
