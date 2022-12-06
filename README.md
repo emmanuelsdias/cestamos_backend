@@ -1,6 +1,6 @@
 # Cestamos!
 
-This is a college project in python and dart for the subject CES-28: Software Engineering Fundamentals, in ITA (Instituto Tecnológico de Aeronáutica, Brazil). "Cestamos!" is an mobile app developed by five ITA students: Ariel Claudino ([`@asclaudino`](https://github.com/asclaudino)), Bernardo Hoffmann da Silva ([`@BerHoffmann`](https://github.com/BerHoffmann)), Emmanuel Dias ([`@emmanuelsdias`](https://github.com/emmanuelsdias)), Eric Guerra Ribeiro ([`@Eric-Guerra-Ribeiro`](https://github.com/Eric-Guerra-Ribeiro)) and Gabriel Gandour ([`@GaGandour`](https://github.com/GaGandour)).
+This is a college project in python and dart for the subject CES-28: Software Engineering Fundamentals, in ITA (Instituto Tecnológico de Aeronáutica, Brazil). "Cestamos!" is a mobile app developed by five ITA students: Ariel Silva Claudino ([`@asclaudino`](https://github.com/asclaudino)), Bernardo Hoffmann da Silva ([`@BerHoffmann`](https://github.com/BerHoffmann)), Emmanuel Dias ([`@emmanuelsdias`](https://github.com/emmanuelsdias)), Eric Guerra Ribeiro ([`@Eric-Guerra-Ribeiro`](https://github.com/Eric-Guerra-Ribeiro)) and Gabriel Gandour ([`@GaGandour`](https://github.com/GaGandour)).
 
 ## How to Execute
 
