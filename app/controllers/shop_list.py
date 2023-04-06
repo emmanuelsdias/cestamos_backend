@@ -1,12 +1,12 @@
 from fastapi import APIRouter
 from fastapi import Depends
 
-from app.services.shop_list import ABCShopListService
-from app.factories.shop_list import get_shop_list_service
+from services.shop_list import ABCShopListService
+from factories.shop_list import get_shop_list_service
 
-from app.dto.shop_list import ShopList, ShopListCreate, ShopListSummary, ShopListEdit
-from app.dto.shop_list import UserList, UserListCreate, UserListStatus
-from app.dto.shop_list import Item, ItemCreate
+from dto.shop_list import ShopList, ShopListCreate, ShopListSummary, ShopListEdit
+from dto.shop_list import UserList, UserListCreate, UserListStatus
+from dto.shop_list import Item, ItemCreate
 
 from typing import List
 

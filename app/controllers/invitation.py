@@ -1,10 +1,10 @@
 from fastapi import APIRouter
 from fastapi import Depends
 
-from app.services.invitation import ABCInvitationService
-from app.factories.invitation import get_invitation_service
+from services.invitation import ABCInvitationService
+from factories.invitation import get_invitation_service
 
-from app.dto.invitation import Invitation, InvitationCreate
+from dto.invitation import Invitation, InvitationCreate
 from typing import List
 
 

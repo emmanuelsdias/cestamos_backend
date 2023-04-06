@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, ForeignKey, Boolean
-from app.dal.database import Base
+from dal.database import Base
 
 
 class UserList(Base):

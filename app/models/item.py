@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
-from app.dal.database import Base
+from dal.database import Base
 
 class Item(Base):
     __tablename__ = "items"

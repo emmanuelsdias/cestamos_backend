@@ -1,8 +1,8 @@
 from fastapi import Depends
 
-from app.dal.user import ABCUserDal
-from app.factories.dal_factories import get_user_dal
-from app.services.user import ABCUserService, UserService
+from dal.user import ABCUserDal
+from factories.dal_factories import get_user_dal
+from services.user import ABCUserService, UserService
 
 
 def get_user_service(

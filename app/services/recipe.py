@@ -1,15 +1,15 @@
 import abc
 from pydantic import parse_obj_as
 
-from app.dal.recipe import ABCRecipeDal
-from app.dal.user import ABCUserDal
+from dal.recipe import ABCRecipeDal
+from dal.user import ABCUserDal
 
-from app.dto.recipe import Recipe, RecipeCreate, RecipeSummary
+from dto.recipe import Recipe, RecipeCreate, RecipeSummary
 
-from app.models.recipe import Recipe as RecipeModel
-from app.models.user import User as UserModel
+from models.recipe import Recipe as RecipeModel
+from models.user import User as UserModel
 
-from app.services.user_based_service import UserBasedService
+from services.user_based_service import UserBasedService
 
 
 from typing import List

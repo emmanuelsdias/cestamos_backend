@@ -1,8 +1,8 @@
 from fastapi import Depends
-from app.dal.query_client \
+from dal.query_client \
     import ABCQueryClient, QueryClient
-from app.factories.config import get_settings
-from app.utils.settings import Settings
+from factories.config import get_settings
+from utils.settings import Settings
 
 
 def get_query_client(

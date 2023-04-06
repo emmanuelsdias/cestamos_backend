@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
-from app.dal.database import Base
+from dal.database import Base
 
 class Recipe(Base):
     __tablename__ = "recipes"

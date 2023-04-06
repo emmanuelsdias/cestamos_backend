@@ -1,9 +1,9 @@
 from fastapi import Depends
 
-from app.dal.recipe import ABCRecipeDal
-from app.dal.user import ABCUserDal
-from app.factories.dal_factories import get_user_dal, get_recipe_dal
-from app.services.recipe import ABCRecipeService, RecipeService
+from dal.recipe import ABCRecipeDal
+from dal.user import ABCUserDal
+from factories.dal_factories import get_user_dal, get_recipe_dal
+from services.recipe import ABCRecipeService, RecipeService
 
 
 def get_recipe_service(

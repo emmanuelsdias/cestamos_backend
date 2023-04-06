@@ -3,7 +3,7 @@ from pydantic import parse_obj_as
 from sqlalchemy.orm import Session
 from sqlalchemy import update
 
-from app.models.item import Item
+from models.item import Item
 
 from typing import List
 

@@ -1,10 +1,10 @@
 from fastapi import APIRouter
 from fastapi import Depends
 
-from app.services.item import ABCItemService
-from app.factories.item import get_item_service
+from services.item import ABCItemService
+from factories.item import get_item_service
 
-from app.dto.shop_list import Item, ItemEdit
+from dto.shop_list import Item, ItemEdit
 from typing import List
 
 

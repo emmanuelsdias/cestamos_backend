@@ -1,10 +1,10 @@
 from fastapi import APIRouter
 from fastapi import Depends
 
-from app.services.user_list import ABCUserListService
-from app.factories.user_list import get_user_list_service
+from services.user_list import ABCUserListService
+from factories.user_list import get_user_list_service
 
-from app.dto.shop_list import UserList, UserListStatus
+from dto.shop_list import UserList, UserListStatus
 
 router = APIRouter()
 

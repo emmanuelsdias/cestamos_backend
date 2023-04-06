@@ -1,10 +1,10 @@
 from fastapi import APIRouter
 from fastapi import Depends
 
-from app.services.recipe import ABCRecipeService
-from app.factories.recipe import get_recipe_service
+from services.recipe import ABCRecipeService
+from factories.recipe import get_recipe_service
 
-from app.dto.recipe import Recipe, RecipeCreate, RecipeSummary
+from dto.recipe import Recipe, RecipeCreate, RecipeSummary
 from typing import List
 
 

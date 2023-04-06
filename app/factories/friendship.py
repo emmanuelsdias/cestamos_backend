@@ -1,9 +1,9 @@
 from fastapi import Depends
 
-from app.dal.friendship import ABCFriendshipDal
-from app.dal.user import ABCUserDal
-from app.factories.dal_factories import get_user_dal, get_friendship_dal
-from app.services.friendship import ABCFriendshipService, FriendshipService
+from dal.friendship import ABCFriendshipDal
+from dal.user import ABCUserDal
+from factories.dal_factories import get_user_dal, get_friendship_dal
+from services.friendship import ABCFriendshipService, FriendshipService
 
 
 def get_friendship_service(

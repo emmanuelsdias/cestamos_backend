@@ -1,5 +1,5 @@
 from typing import List
-from app.dto.output_dto import OutputBaseModel
+from dto.output_dto import OutputBaseModel
 
 
 

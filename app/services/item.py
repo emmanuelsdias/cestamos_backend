@@ -2,19 +2,19 @@ import abc
 from pydantic import parse_obj_as
 from fastapi import HTTPException
 
-from app.dal.item import ABCItemDal
-from app.dal.shop_list import ABCShopListDal
-from app.dal.user import ABCUserDal
-from app.dal.user_list import ABCUserListDal
+from dal.item import ABCItemDal
+from dal.shop_list import ABCShopListDal
+from dal.user import ABCUserDal
+from dal.user_list import ABCUserListDal
 
-from app.dto.shop_list import Item, ItemEdit
+from dto.shop_list import Item, ItemEdit
 
 
-from app.models.user import User as UserModel
-from app.models.item import Item as ItemModel
-from app.models.user_list import UserList as UserListModel
+from models.user import User as UserModel
+from models.item import Item as ItemModel
+from models.user_list import UserList as UserListModel
 
-from app.services.user_based_service import UserBasedService
+from services.user_based_service import UserBasedService
 
 from typing import List
 
