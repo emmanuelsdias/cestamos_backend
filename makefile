@@ -23,7 +23,7 @@ install:
 	pip install -r app/requirements.txt
 
 publish:
-	space push
+	cd app && space push
 
 .PHONY: lint-python
 lint-python:
