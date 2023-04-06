@@ -1,15 +1,15 @@
 import abc
 from fastapi import HTTPException
 
-from app.dal.shop_list import ABCShopListDal
-from app.dal.user import ABCUserDal
-from app.dal.user_list import ABCUserListDal
+from dal.shop_list import ABCShopListDal
+from dal.user import ABCUserDal
+from dal.user_list import ABCUserListDal
 
-from app.dto.shop_list import UserList, UserListStatus
+from dto.shop_list import UserList, UserListStatus
 
-from app.models.user_list import UserList as UserListModel
+from models.user_list import UserList as UserListModel
 
-from app.services.user_based_service import UserBasedService
+from services.user_based_service import UserBasedService
 
 
 from typing import List

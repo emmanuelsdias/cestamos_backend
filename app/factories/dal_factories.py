@@ -1,15 +1,15 @@
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
-from app.dal.item import ItemDal, ABCItemDal
-from app.dal.user import UserDal, ABCUserDal
-from app.dal.recipe import RecipeDal, ABCRecipeDal
-from app.dal.shop_list import ShopListDal, ABCShopListDal
-from app.dal.user_list import UserListDal, ABCUserListDal
-from app.dal.invitation import InvitationDal, ABCInvitationDal
-from app.dal.friendship import FriendshipDal, ABCFriendshipDal
+from dal.item import ItemDal, ABCItemDal
+from dal.user import UserDal, ABCUserDal
+from dal.recipe import RecipeDal, ABCRecipeDal
+from dal.shop_list import ShopListDal, ABCShopListDal
+from dal.user_list import UserListDal, ABCUserListDal
+from dal.invitation import InvitationDal, ABCInvitationDal
+from dal.friendship import FriendshipDal, ABCFriendshipDal
 
-from app.factories.db_session import get_db
+from factories.db_session import get_db
 
 def get_user_dal(
     db: Session = Depends(get_db)

@@ -1,11 +1,11 @@
 from fastapi import Depends
 
-from app.dal.user import ABCUserDal
-from app.dal.item import ABCItemDal
-from app.dal.shop_list import ABCShopListDal
-from app.dal.user_list import ABCUserListDal
-from app.factories.dal_factories import get_user_dal, get_item_dal, get_shop_list_dal, get_user_list_dal
-from app.services.item import ABCItemService, ItemService
+from dal.user import ABCUserDal
+from dal.item import ABCItemDal
+from dal.shop_list import ABCShopListDal
+from dal.user_list import ABCUserListDal
+from factories.dal_factories import get_user_dal, get_item_dal, get_shop_list_dal, get_user_list_dal
+from services.item import ABCItemService, ItemService
 
 
 def get_item_service(

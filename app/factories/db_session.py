@@ -1,4 +1,4 @@
-from app.dal.database import SessionLocal
+from dal.database import SessionLocal
 from sqlalchemy.orm import Session
 
 

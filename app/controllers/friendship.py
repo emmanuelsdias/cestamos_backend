@@ -1,10 +1,10 @@
 from fastapi import APIRouter
 from fastapi import Depends
 
-from app.services.friendship import ABCFriendshipService
-from app.factories.friendship import get_friendship_service
+from services.friendship import ABCFriendshipService
+from factories.friendship import get_friendship_service
 
-from app.dto.friendship import Friendship
+from dto.friendship import Friendship
 from typing import List
 
 

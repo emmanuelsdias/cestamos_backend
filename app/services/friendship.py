@@ -2,15 +2,15 @@ import abc
 from pydantic import parse_obj_as
 from fastapi import HTTPException
 
-from app.dal.friendship import ABCFriendshipDal
-from app.dal.user import ABCUserDal
+from dal.friendship import ABCFriendshipDal
+from dal.user import ABCUserDal
 
-from app.dto.friendship import Friendship
+from dto.friendship import Friendship
 
-from app.models.friendship import Friendship as FriendshipModel
-from app.models.user import User as UserModel
+from models.friendship import Friendship as FriendshipModel
+from models.user import User as UserModel
 
-from app.services.user_based_service import UserBasedService
+from services.user_based_service import UserBasedService
 
 
 from typing import List

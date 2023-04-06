@@ -2,13 +2,13 @@ from fastapi import HTTPException
 import abc
 from pydantic import parse_obj_as
 
-from app.dal.user import ABCUserDal
-from app.logic.user import hash_password, generate_token
-from app.dto.user import UserSummary, UserSign, UserAuth, UserEdit, User, UserPasswordCheck
+from dal.user import ABCUserDal
+from logic.user import hash_password, generate_token
+from dto.user import UserSummary, UserSign, UserAuth, UserEdit, User, UserPasswordCheck
 
-from app.models.user import User as UserModel
+from models.user import User as UserModel
 
-from app.services.user_based_service import UserBasedService
+from services.user_based_service import UserBasedService
 
 from typing import List
 

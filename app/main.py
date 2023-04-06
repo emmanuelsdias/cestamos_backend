@@ -1,8 +1,7 @@
-import uvicorn
-from fastapi import FastAPI
-from app.controllers import user, recipe, invitation, friendship, shop_list, item, user_list
-
 import alembic.config
+import uvicorn
+from controllers import friendship, invitation, item, recipe, shop_list, user, user_list
+from fastapi import FastAPI
 
 app = FastAPI()
 

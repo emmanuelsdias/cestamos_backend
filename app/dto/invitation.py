@@ -1,6 +1,6 @@
 from typing import List
 from pydantic import BaseModel
-from app.dto.output_dto import OutputBaseModel
+from dto.output_dto import OutputBaseModel
 
 class InvitationCreate(BaseModel):
     user_id: int

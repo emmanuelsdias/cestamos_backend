@@ -1,6 +1,6 @@
 from typing import List, Union
 from pydantic import BaseModel
-from app.dto.output_dto import OutputBaseModel
+from dto.output_dto import OutputBaseModel
 
 
 class UserListCreate(BaseModel):

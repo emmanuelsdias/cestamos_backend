@@ -3,9 +3,9 @@ from pydantic import parse_obj_as
 from sqlalchemy.orm import Session
 from sqlalchemy import update, and_
 
-from app.models.shop_list import ShopList
-from app.models.user_list import UserList
-from app.models.item import Item
+from models.shop_list import ShopList
+from models.user_list import UserList
+from models.item import Item
 
 from typing import List
 

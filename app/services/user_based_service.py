@@ -1,4 +1,4 @@
-from app.dal.user import ABCUserDal
+from dal.user import ABCUserDal
 from fastapi import HTTPException
 
 class UserBasedService:

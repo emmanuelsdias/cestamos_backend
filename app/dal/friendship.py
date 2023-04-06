@@ -3,7 +3,7 @@ from pydantic import parse_obj_as
 from sqlalchemy.orm import Session
 from sqlalchemy import update, or_, and_
 
-from app.models.friendship import Friendship
+from models.friendship import Friendship
 
 from typing import List
 

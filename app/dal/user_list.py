@@ -2,7 +2,7 @@ import abc
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
 
-from app.models.user_list import UserList
+from models.user_list import UserList
 
 from typing import List
 

@@ -1,10 +1,10 @@
 from fastapi import Depends
 
-from app.dal.user import ABCUserDal
-from app.dal.invitation import ABCInvitationDal
-from app.dal.friendship import ABCFriendshipDal
-from app.factories.dal_factories import get_user_dal, get_invitation_dal, get_friendship_dal
-from app.services.invitation import ABCInvitationService, InvitationService
+from dal.user import ABCUserDal
+from dal.invitation import ABCInvitationDal
+from dal.friendship import ABCFriendshipDal
+from factories.dal_factories import get_user_dal, get_invitation_dal, get_friendship_dal
+from services.invitation import ABCInvitationService, InvitationService
 
 
 def get_invitation_service(

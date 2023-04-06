@@ -1,10 +1,10 @@
 from fastapi import APIRouter
 from fastapi import Depends
 
-from app.services.user import ABCUserService
-from app.factories.user import get_user_service
+from services.user import ABCUserService
+from factories.user import get_user_service
 
-from app.dto.user import User, UserSign, UserAuth, UserEdit, UserPasswordCheck
+from dto.user import User, UserSign, UserAuth, UserEdit, UserPasswordCheck
 from typing import List
 
 

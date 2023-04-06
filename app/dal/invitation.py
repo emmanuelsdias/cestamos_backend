@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import update, or_, and_
 # from sqlalchemy import and_, or_, not_
 
-from app.models.friendship import Invitation
+from models.friendship import Invitation
 
 from typing import List
 

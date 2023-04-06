@@ -6,7 +6,7 @@ from sqlalchemy import pool
 from sqlalchemy import engine_from_config
 from alembic import context
 
-from app.dal.database import Base
+from dal.database import Base
 
 
 def import_models():

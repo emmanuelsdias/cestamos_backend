@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Boolean
-from app.dal.database import Base
+from dal.database import Base
 
 class ShopList(Base):
     __tablename__ = "shop_lists"

@@ -1,5 +1,5 @@
 start:
-	uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+	cd app && uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
 detect-ip-adress:
 	ipconfig
@@ -17,7 +17,14 @@ unmigrate:
 	alembic -c app/alembic.ini downgrade -1
 
 freeze:
-	pip freeze > requirements.txt
+	pip freeze > app/requirements.txt
 
 install:
-	pip install -r requirements.txt
+	pip install -r app/requirements.txt
+
+publish:
+	cd app && space push
+
+.PHONY: lint-python
+lint-python:
+	black . --line-length 90
