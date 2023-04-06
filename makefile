@@ -24,3 +24,7 @@ install:
 
 publish:
 	space push
+
+.PHONY: lint-python
+lint-python:
+	black . --line-length 90
