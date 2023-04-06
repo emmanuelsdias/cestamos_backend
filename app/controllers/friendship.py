@@ -10,10 +10,11 @@ from typing import List
 
 router = APIRouter()
 
+
 @router.get("/", response_model=List[Friendship])
 async def get_friendships(
     token: str = None,
-    friendship_service: ABCFriendshipService = Depends(get_friendship_service)
+    friendship_service: ABCFriendshipService = Depends(get_friendship_service),
 ):
     return friendship_service.get_friendships(token)
 
@@ -22,6 +23,6 @@ async def get_friendships(
 async def delete_friendship(
     friendship_id: int,
     token: str = None,
-    friendship_service: ABCFriendshipService = Depends(get_friendship_service)
+    friendship_service: ABCFriendshipService = Depends(get_friendship_service),
 ):
     return friendship_service.delete_friendship(friendship_id, token)

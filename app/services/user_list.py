@@ -14,23 +14,23 @@ from services.user_based_service import UserBasedService
 
 from typing import List
 
-class ABCUserListService(UserBasedService):
 
+class ABCUserListService(UserBasedService):
     def __init__(self, user_dal: ABCUserDal):
         super().__init__(user_dal)
 
     @abc.abstractmethod
-    def change_user_status(self, user_list_id: int, user_list_status: UserListStatus, token: str) -> UserList:
-        """ Changes user's status in list """
+    def change_user_status(
+        self, user_list_id: int, user_list_status: UserListStatus, token: str
+    ) -> UserList:
+        """Changes user's status in list"""
 
     @abc.abstractmethod
     def delete_user_list(self, user_list_id: int, token: str) -> UserList:
-        """ Deletes user from list """
-
+        """Deletes user from list"""
 
 
 class UserListService(ABCUserListService):
-
     def __init__(
         self,
         shop_list_dal: ABCShopListDal,
@@ -45,11 +45,11 @@ class UserListService(ABCUserListService):
     def construct_user_list_dto(self, user_list: UserListModel) -> UserList:
         user = self.user_dal.get_user_by_id(user_list.user_id)
         user_list_dto = UserList(
-            user_id = user.user_id,
-            username = user.username,
-            is_adm = user_list.is_adm,
-            is_nutritionist = user_list.is_nutritionist,
-            user_list_id = user_list.user_list_id,
+            user_id=user.user_id,
+            username=user.username,
+            is_adm=user_list.is_adm,
+            is_nutritionist=user_list.is_nutritionist,
+            user_list_id=user_list.user_list_id,
         )
         return user_list_dto
 
@@ -59,19 +59,21 @@ class UserListService(ABCUserListService):
             self.raise_access_denied_error()
         return user_list
 
-    def check_user_list_adm_validity(self, user_id: int, shop_list_id: int) -> UserListModel:
+    def check_user_list_adm_validity(
+        self, user_id: int, shop_list_id: int
+    ) -> UserListModel:
         user_list = self.check_user_list_validity(user_id, shop_list_id)
         if not user_list.is_adm:
             self.raise_access_denied_error()
         return user_list
 
-    def change_user_status(self, user_list_id: int, user_list_status: UserListStatus, token: str) -> UserList:
+    def change_user_status(
+        self, user_list_id: int, user_list_status: UserListStatus, token: str
+    ) -> UserList:
         user = self.check_user_validity(token)
         user_list = self.dal.get_user_list_by_user_list_id(user_list_id)
         if user_list is None:
-            raise HTTPException(
-                status_code=404, detail="User List doesn't exist"
-            )
+            raise HTTPException(status_code=404, detail="User List doesn't exist")
         self.check_user_list_adm_validity(user.user_id, user_list.shop_list_id)
         if user_list_status.is_adm is not None:
             if user.user_id != user_list.user_id:
@@ -85,11 +87,11 @@ class UserListService(ABCUserListService):
         user = self.check_user_validity(token)
         user_list = self.dal.get_user_list_by_user_list_id(user_list_id)
         if user_list is None:
-            raise HTTPException(
-                status_code=404, detail="User List doesn't exist"
-            )
+            raise HTTPException(status_code=404, detail="User List doesn't exist")
         if user.user_id == user_list.user_id:
-            users_from_same_list = self.dal.get_user_lists_by_shop_list_id(user_list.shop_list_id)
+            users_from_same_list = self.dal.get_user_lists_by_shop_list_id(
+                user_list.shop_list_id
+            )
             if len(users_from_same_list) == 1:
                 self.shop_list_dal.delete_shop_list(user_list.shop_list_id)
         else:

@@ -4,7 +4,12 @@ from dal.user import ABCUserDal
 from dal.item import ABCItemDal
 from dal.shop_list import ABCShopListDal
 from dal.user_list import ABCUserListDal
-from factories.dal_factories import get_user_dal, get_item_dal, get_shop_list_dal, get_user_list_dal
+from factories.dal_factories import (
+    get_user_dal,
+    get_item_dal,
+    get_shop_list_dal,
+    get_user_list_dal,
+)
 from services.item import ABCItemService, ItemService
 
 

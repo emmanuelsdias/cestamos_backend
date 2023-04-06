@@ -8,7 +8,7 @@ from services.recipe import ABCRecipeService, RecipeService
 
 def get_recipe_service(
     recipe_dal: ABCRecipeDal = Depends(get_recipe_dal),
-    user_dal: ABCUserDal = Depends(get_user_dal)
+    user_dal: ABCUserDal = Depends(get_user_dal),
 ) -> ABCRecipeService:
     client = RecipeService(recipe_dal, user_dal)
     try:

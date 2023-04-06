@@ -11,5 +11,3 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
     token = Column(String, unique=True, index=True)
-
-

@@ -14,10 +14,10 @@ def import_models():
     models_package = os.path.join(os.getcwd(), "app", "models")
     files = os.listdir(models_package)
     module_names = [
-        file[:-3] for file in files if
-        file.endswith('.py') and file != '__init__.py']
+        file[:-3] for file in files if file.endswith(".py") and file != "__init__.py"
+    ]
     for module_name in module_names:
-        import_module('app.models.{}'.format(module_name))
+        import_module("app.models.{}".format(module_name))
 
 
 import_models()
@@ -26,8 +26,10 @@ import_models()
 # access to the values within the .ini file in use.
 config = context.config
 
-config.set_main_option("sqlalchemy.url", os.getenv(
-    "db_url", "postgresql://postgres:123456@localhost:5430/cestamos_db"))
+config.set_main_option(
+    "sqlalchemy.url",
+    os.getenv("db_url", "postgresql://postgres:123456@localhost:5430/cestamos_db"),
+)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -83,9 +85,7 @@ def run_migrations_online():
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()

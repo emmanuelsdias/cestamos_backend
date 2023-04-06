@@ -10,12 +10,13 @@ from typing import List
 
 router = APIRouter()
 
+
 @router.put("/{item_id}", response_model=Item)
 async def edit_item(
     item_id: int,
     item_data: ItemEdit,
     token: str = None,
-    item_service: ABCItemService = Depends(get_item_service)
+    item_service: ABCItemService = Depends(get_item_service),
 ):
     return item_service.edit_item(token, item_data, item_id)
 
@@ -24,6 +25,6 @@ async def edit_item(
 async def delete_item(
     item_id: int,
     token: str = None,
-    item_service: ABCItemService = Depends(get_item_service)
+    item_service: ABCItemService = Depends(get_item_service),
 ):
     return item_service.delete_item(token, item_id)

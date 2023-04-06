@@ -1,9 +1,10 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
 from dal.database import Base
 
+
 class Item(Base):
     __tablename__ = "items"
-    
+
     item_id = Column(Integer, primary_key=True, index=True)
 
     shop_list_id = Column(Integer, ForeignKey("shop_lists.shop_list_id"))

@@ -7,8 +7,8 @@ from models.user import User
 
 from typing import List
 
-class ABCUserDal():
 
+class ABCUserDal:
     @abc.abstractmethod
     def get_users(self) -> List[User]:
         """Gets all users in database"""
@@ -33,7 +33,6 @@ class ABCUserDal():
 
 
 class UserDal(ABCUserDal):
-
     def __init__(self, db_session: Session):
         self.db: Session = db_session
 
@@ -56,35 +55,23 @@ class UserDal(ABCUserDal):
         return user
 
     def update_user_auth(self, user: User) -> User:
-        self.db.query(User).filter(
-            User.user_id == user.user_id
-        ).\
-            update(
-                {
-                    "token" : user.token
-                }
-            )
+        self.db.query(User).filter(User.user_id == user.user_id).update(
+            {"token": user.token}
+        )
         self.db.commit()
         return self.get_user_by_id(user.user_id)
-    
+
     def update_user(self, user: User) -> User:
-        self.db.query(User).filter(
-            User.user_id == user.user_id
-        ).\
-            update(
-                {
-                    "username" : user.username,
-                    "hashed_password" : user.password
-                }
-            )
+        self.db.query(User).filter(User.user_id == user.user_id).update(
+            {"username": user.username, "hashed_password": user.password}
+        )
         self.db.commit()
         return self.get_user_by_id(user.user_id)
 
     def delete_user(self, user_id: int) -> User:
         deleted_user = self.get_user_by_id(user_id)
 
-        self.db.query(User).filter(User.user_id == user_id).\
-            delete()
-       
+        self.db.query(User).filter(User.user_id == user_id).delete()
+
         self.db.commit()
         return deleted_user

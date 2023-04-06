@@ -5,7 +5,14 @@ from dal.user import ABCUserDal
 from dal.friendship import ABCFriendshipDal
 from dal.item import ABCItemDal
 from dal.user_list import ABCUserListDal
-from factories.dal_factories import get_user_dal, get_shop_list_dal, get_friendship_dal, get_item_dal, get_user_list_dal, get_user_list_dal
+from factories.dal_factories import (
+    get_user_dal,
+    get_shop_list_dal,
+    get_friendship_dal,
+    get_item_dal,
+    get_user_list_dal,
+    get_user_list_dal,
+)
 from services.shop_list import ABCShopListService, ShopListService
 
 
@@ -16,7 +23,9 @@ def get_shop_list_service(
     user_dal: ABCUserDal = Depends(get_user_dal),
     user_list_dal: ABCUserListDal = Depends(get_user_list_dal),
 ) -> ABCShopListService:
-    client = ShopListService(shop_list_dal, friendship_dal, item_dal, user_dal, user_list_dal)
+    client = ShopListService(
+        shop_list_dal, friendship_dal, item_dal, user_dal, user_list_dal
+    )
     try:
         yield client
     finally:
