@@ -20,21 +20,19 @@ from typing import List
 
 
 class ABCItemService(UserBasedService):
-
     def __init__(self, user_dal: ABCUserDal):
         super().__init__(user_dal)
 
     @abc.abstractmethod
     def edit_item(self, token: str, item_data: ItemEdit) -> Item:
-        """ Returns invitations from user """
+        """Returns invitations from user"""
 
     @abc.abstractmethod
     def delete_item(self, token: str, item_id: int) -> Item:
-        """ Deletes item """
-    
+        """Deletes item"""
+
 
 class ItemService(ABCItemService):
-
     def __init__(
         self,
         user_dal: ABCUserDal,
@@ -48,15 +46,13 @@ class ItemService(ABCItemService):
         self.shop_list_dal = shop_list_dal
         self.user_list_dal = user_list_dal
 
-
     def construct_item_dto(self, item: ItemModel) -> Item:
         return Item(
-            item_id = item.item_id,
-            name = item.name,
-            quantity = item.quantity,
-            was_bought = item.was_bought
+            item_id=item.item_id,
+            name=item.name,
+            quantity=item.quantity,
+            was_bought=item.was_bought,
         )
-
 
     def check_user_list_validity(self, user_id: int, shop_list_id: int) -> UserListModel:
         user_list = self.user_list_dal.get_user_list_by_user_id(shop_list_id, user_id)
@@ -64,22 +60,20 @@ class ItemService(ABCItemService):
             self.raise_access_denied_error()
         return user_list
 
-
-    def check_user_list_adm_validity(self, user_id: int, shop_list_id: int) -> UserListModel:
+    def check_user_list_adm_validity(
+        self, user_id: int, shop_list_id: int
+    ) -> UserListModel:
         user_list = self.check_user_list_validity(user_id, shop_list_id)
         if not user_list.is_adm:
             self.raise_access_denied_error()
         return user_list
-
 
     def edit_item(self, token: str, item_data: ItemEdit, item_id: int) -> Item:
         user = self.check_user_validity(token)
         item = self.dal.get_item_by_id(item_id)
 
         if item is None:
-            raise HTTPException(
-                status_code=404, detail="Item doesn't exist"
-            )
+            raise HTTPException(status_code=404, detail="Item doesn't exist")
 
         self.check_user_list_validity(user.user_id, item.shop_list_id)
 
@@ -91,17 +85,13 @@ class ItemService(ABCItemService):
 
         return self.construct_item_dto(item)
 
-
     def delete_item(self, token: str, item_id: int) -> Item:
         user = self.check_user_validity(token)
         item = self.dal.get_item_by_id(item_id)
         if item is None:
-            raise HTTPException(
-                status_code=404, detail="Item doesn't exist"
-            )
-        
+            raise HTTPException(status_code=404, detail="Item doesn't exist")
+
         self.check_user_list_validity(user.user_id, item.shop_list_id)
         self.dal.delete_item(item.item_id)
-        
-        return self.construct_item_dto(item)
 
+        return self.construct_item_dto(item)

@@ -14,7 +14,7 @@ async def change_user_status(
     user_list_id: int,
     user_list_status: UserListStatus,
     token: str = None,
-    user_list_service: ABCUserListService = Depends(get_user_list_service)
+    user_list_service: ABCUserListService = Depends(get_user_list_service),
 ):
     return user_list_service.change_user_status(user_list_id, user_list_status, token)
 
@@ -23,6 +23,6 @@ async def change_user_status(
 async def delete_user_list(
     user_list_id: int,
     token: str = None,
-    user_list_service: ABCUserListService = Depends(get_user_list_service)
+    user_list_service: ABCUserListService = Depends(get_user_list_service),
 ):
     return user_list_service.delete_user_list(user_list_id, token)

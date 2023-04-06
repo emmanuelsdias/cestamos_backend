@@ -11,9 +11,8 @@ from dal.friendship import FriendshipDal, ABCFriendshipDal
 
 from factories.db_session import get_db
 
-def get_user_dal(
-    db: Session = Depends(get_db)
-) -> ABCUserDal:
+
+def get_user_dal(db: Session = Depends(get_db)) -> ABCUserDal:
     dal = UserDal(db)
     try:
         yield dal
@@ -21,9 +20,7 @@ def get_user_dal(
         pass
 
 
-def get_recipe_dal(
-    db: Session = Depends(get_db)
-) -> ABCRecipeDal:
+def get_recipe_dal(db: Session = Depends(get_db)) -> ABCRecipeDal:
     dal = RecipeDal(db)
     try:
         yield dal
@@ -31,9 +28,7 @@ def get_recipe_dal(
         pass
 
 
-def get_shop_list_dal(
-    db: Session = Depends(get_db)
-) -> ABCShopListDal:
+def get_shop_list_dal(db: Session = Depends(get_db)) -> ABCShopListDal:
     dal = ShopListDal(db)
     try:
         yield dal
@@ -41,9 +36,7 @@ def get_shop_list_dal(
         pass
 
 
-def get_invitation_dal(
-    db: Session = Depends(get_db)
-) -> ABCInvitationDal:
+def get_invitation_dal(db: Session = Depends(get_db)) -> ABCInvitationDal:
     dal = InvitationDal(db)
     try:
         yield dal
@@ -51,9 +44,7 @@ def get_invitation_dal(
         pass
 
 
-def get_friendship_dal(
-    db: Session = Depends(get_db)
-) -> ABCFriendshipDal:
+def get_friendship_dal(db: Session = Depends(get_db)) -> ABCFriendshipDal:
     dal = FriendshipDal(db)
     try:
         yield dal
@@ -61,9 +52,7 @@ def get_friendship_dal(
         pass
 
 
-def get_item_dal(
-    db: Session = Depends(get_db)
-) -> ABCItemDal:
+def get_item_dal(db: Session = Depends(get_db)) -> ABCItemDal:
     dal = ItemDal(db)
     try:
         yield dal
@@ -71,12 +60,9 @@ def get_item_dal(
         pass
 
 
-def get_user_list_dal(
-    db: Session = Depends(get_db)
-) -> ABCUserListDal:
+def get_user_list_dal(db: Session = Depends(get_db)) -> ABCUserListDal:
     dal = UserListDal(db)
     try:
         yield dal
     finally:
         pass
-

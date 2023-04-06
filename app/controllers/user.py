@@ -10,31 +10,34 @@ from typing import List
 
 router = APIRouter()
 
+
 @router.get("/", response_model=List[UserAuth])
-async def get_all_users(
-    user_service: ABCUserService = Depends(get_user_service)
-):
+async def get_all_users(user_service: ABCUserService = Depends(get_user_service)):
     return user_service.get_all_users()
+
 
 @router.post("/", response_model=UserAuth)
 async def sign_user(
-    user: UserSign,
-    user_service: ABCUserService = Depends(get_user_service)
+    user: UserSign, user_service: ABCUserService = Depends(get_user_service)
 ):
-    return user_service.save_user(user) if user.new_user else user_service.log_in_user(user)
+    return (
+        user_service.save_user(user) if user.new_user else user_service.log_in_user(user)
+    )
 
-@router.put("/", response_model = User)
+
+@router.put("/", response_model=User)
 async def edit_user(
     user_data: UserEdit,
     token: str = None,
-    user_service: ABCUserService = Depends(get_user_service)
+    user_service: ABCUserService = Depends(get_user_service),
 ):
     return user_service.edit_user(token, user_data)
 
-@router.delete("/", response_model = User)
+
+@router.delete("/", response_model=User)
 async def delete_user(
     user_data: UserPasswordCheck,
     token: str = None,
-    user_service: ABCUserService = Depends(get_user_service)
+    user_service: ABCUserService = Depends(get_user_service),
 ):
     return user_service.delete_user(token, user_data)
