@@ -21,3 +21,6 @@ freeze:
 
 install:
 	pip install -r app/requirements.txt
+
+publish:
+	space push
