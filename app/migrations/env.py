@@ -11,13 +11,13 @@ from dal.database import Base
 
 def import_models():
     """Dynamically import all models"""
-    models_package = os.path.join(os.getcwd(), "app", "models")
+    models_package = os.path.join(os.getcwd(), "models")
     files = os.listdir(models_package)
     module_names = [
         file[:-3] for file in files if file.endswith(".py") and file != "__init__.py"
     ]
     for module_name in module_names:
-        import_module("app.models.{}".format(module_name))
+        import_module("models.{}".format(module_name))
 
 
 import_models()
