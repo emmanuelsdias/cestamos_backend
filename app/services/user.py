@@ -89,10 +89,10 @@ class UserService(ABCUserService):
             raise HTTPException(status_code=404, detail="User not found")
         return UserSummary.from_orm(user)
 
-    def edit_user(self, token: str, user_data: UserEdit) -> User:
-        user = self.check_user_validity(token)
+    def edit_user(self, user_data: UserEdit) -> User:
+        user = self.user_dal.get_user_by_email(user_data.email)
         if hash_password(user_data.old_password) != user.hashed_password:
-            raise HTTPException(status_code=403, detail="Forbidden")
+            raise self.raise_access_denied_error()
         user.username = user_data.username
         user.password = hash_password(user_data.password)
 

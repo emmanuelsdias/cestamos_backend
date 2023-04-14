@@ -28,10 +28,9 @@ async def sign_user(
 @router.put("/", response_model=User)
 async def edit_user(
     user_data: UserEdit,
-    token: str = None,
     user_service: ABCUserService = Depends(get_user_service),
 ):
-    return user_service.edit_user(token, user_data)
+    return user_service.edit_user(user_data)
 
 
 @router.delete("/", response_model=User)

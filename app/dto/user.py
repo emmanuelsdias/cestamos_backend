@@ -31,6 +31,7 @@ class UserAuth(OutputBaseModel):
 
 class UserEdit(BaseModel):
     username: str
+    email: str
     old_password: str
     password: str
 
