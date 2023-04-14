@@ -3,6 +3,7 @@ from fastapi import HTTPException
 from models.user import User
 from typing import Optional
 
+
 class UserBasedService:
     def __init__(self, user_dal: ABCUserDal):
         self.user_dal = user_dal

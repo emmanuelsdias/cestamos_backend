@@ -33,10 +33,11 @@ async def edit_user(
     return user_service.edit_user(user_data)
 
 
-@router.delete("/", response_model=User)
+@router.delete("/{user_id}", response_model=User)
 async def delete_user(
+    user_id: int,
     user_data: UserPasswordCheck,
     token: str = None,
     user_service: ABCUserService = Depends(get_user_service),
 ):
-    return user_service.delete_user(token, user_data)
+    return user_service.delete_user(user_id, token, user_data)
