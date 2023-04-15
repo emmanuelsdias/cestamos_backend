@@ -28,7 +28,7 @@ class ABCShopListService(UserBasedService):
         super().__init__(user_dal)
 
     @abc.abstractmethod
-    def get_shop_lists(self, token) -> List[ShopListSummary]:
+    def get_shop_lists(self, token: str, return_templates: bool) -> List[ShopListSummary]:
         """Returns shop lists from user"""
 
     @abc.abstractmethod
@@ -142,11 +142,14 @@ class ShopListService(ABCShopListService):
             self.raise_access_denied_error()
         return user_list
 
-    def get_shop_lists(self, token) -> List[ShopListSummary]:
+    def get_shop_lists(self, token: str, return_templates: bool) -> List[ShopListSummary]:
         user = self.check_user_validity(token)
         shop_lists = self.dal.get_shop_lists_from_user(user.user_id)
+        filtered_shop_lists = [
+            shop_list for shop_list in shop_lists if shop_list.is_template == return_templates
+        ]
         shop_lists_dto = [
-            self.construct_shop_list_summary_dto(shop_list) for shop_list in shop_lists
+            self.construct_shop_list_summary_dto(shop_list) for shop_list in filtered_shop_lists
         ]
         return shop_lists_dto
 
@@ -156,7 +159,8 @@ class ShopListService(ABCShopListService):
         shop_list = self.dal.get_shop_list_by_id(shop_list_id)
         user_lists = self.user_list_dal.get_user_lists_by_shop_list_id(shop_list_id)
 
-        if not (user.user_id in [u.user_id for u in user_lists]):
+        user_list = self.check_user_list_validity(user.user_id, shop_list_id)
+        if (not user_list.is_adm) and (user_list.is_nutritionist):
             self.raise_access_denied_error()
 
         items = self.item_dal.get_items_from_list(shop_list_id)
@@ -180,6 +184,8 @@ class ShopListService(ABCShopListService):
             is_template=shop_list.is_template,
         )
         invited_user_ids = [id for id in shop_list.user_ids if id != user.user_id]
+        # remove duplicates
+        invited_user_ids = list(dict.fromkeys(invited_user_ids))
 
         for invited_user_id in invited_user_ids:
             friendship = self.friendship_dal.get_friendship_from_user_pair(
