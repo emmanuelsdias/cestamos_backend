@@ -57,8 +57,14 @@ class RecipeDal(ABCRecipeDal):
         self.db.query(Recipe).filter(Recipe.recipe_id == recipe.recipe_id).update(
             {
                 "name": recipe.name,
+                "description": recipe.description,
                 "ingredients": recipe.ingredients,
+                "people_served": recipe.people_served,
                 "instructions": recipe.instructions,
+                "prep_time": recipe.prep_time,
+                "cooking_time": recipe.cooking_time,
+                "resting_time": recipe.resting_time,
+                "is_public": recipe.is_public,
             }
         )
 
