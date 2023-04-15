@@ -292,19 +292,22 @@ class ShopListService(ABCShopListService):
         self.dal.delete_shop_list(shop_list.shop_list_id)
         return self.construct_shop_list_summary_dto(shop_list)
 
-    def add_recipe_to_list(self,shop_list_id: int, recipe_id: int, token: str) -> RecipeSummary:
+    def add_recipe_to_list(
+        self, shop_list_id: int, recipe_id: int, token: str
+    ) -> RecipeSummary:
         user = self.check_user_validity(token)
         user_list = self.check_user_list_validity(user.user_id, shop_list_id)
         if not user_list.is_nutritionist:
             self.raise_access_denied_error()
-        recipe_list = self.recipe_list_dal.get_recipe_list_by_shop_list_id_and_recipe_id(shop_list_id, recipe_id)
+        recipe_list = self.recipe_list_dal.get_recipe_list_by_shop_list_id_and_recipe_id(
+            shop_list_id, recipe_id
+        )
         if recipe_list is not None:
             raise HTTPException(status_code=400, detail="Recipe already in list")
         recipe_list = RecipeListModel(
             shop_list_id=shop_list_id,
             recipe_id=recipe_id,
-
-        )    
+        )
         self.recipe_list_dal.create_recipe_list(recipe_list)
         recipe = self.recipe_dal.get_recipe_by_id(recipe_id)
         recipe_summary = RecipeSummary(

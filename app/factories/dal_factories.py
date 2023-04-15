@@ -68,6 +68,7 @@ def get_user_list_dal(db: Session = Depends(get_db)) -> ABCUserListDal:
     finally:
         pass
 
+
 def get_recipe_list_dal(db: Session = Depends(get_db)) -> ABCRecipeListDal:
     dal = RecipeListDal(db)
     try:

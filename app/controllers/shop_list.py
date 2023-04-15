@@ -79,6 +79,7 @@ async def add_item_to_list(
 ):
     return shop_list_service.add_item_to_list(shop_list_id, item, token)
 
+
 @router.post("/{shop_list_id}/recipe/{recipe_id}", response_model=RecipeSummary)
 async def add_recipe_to_list(
     shop_list_id: int,
@@ -86,4 +87,4 @@ async def add_recipe_to_list(
     token: str = None,
     shop_list_service: ABCShopListService = Depends(get_shop_list_service),
 ):
-    return shop_list_service.add_recipe_to_list(shop_list_id, recipe_id, token)    
+    return shop_list_service.add_recipe_to_list(shop_list_id, recipe_id, token)

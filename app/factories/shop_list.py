@@ -30,7 +30,13 @@ def get_shop_list_service(
     recipe_dal: ABCRecipeDal = Depends(get_recipe_dal),
 ) -> ABCShopListService:
     client = ShopListService(
-        shop_list_dal, friendship_dal, item_dal, user_dal, user_list_dal, recipe_list_dal, recipe_dal
+        shop_list_dal,
+        friendship_dal,
+        item_dal,
+        user_dal,
+        user_list_dal,
+        recipe_list_dal,
+        recipe_dal,
     )
     try:
         yield client

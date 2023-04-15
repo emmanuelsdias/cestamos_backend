@@ -23,6 +23,16 @@ class RecipeListDal(ABCRecipeListDal):
         self.db.refresh(recipe_list)
         return recipe_list
 
-    def get_recipe_list_by_shop_list_id_and_recipe_id(self,shop_list_id: int, recipe_id: int) -> RecipeList:
-        return self.db.query(RecipeList).filter(and_(RecipeList.shop_list_id == shop_list_id, RecipeList.recipe_id == recipe_id)).first()
-    
+    def get_recipe_list_by_shop_list_id_and_recipe_id(
+        self, shop_list_id: int, recipe_id: int
+    ) -> RecipeList:
+        return (
+            self.db.query(RecipeList)
+            .filter(
+                and_(
+                    RecipeList.shop_list_id == shop_list_id,
+                    RecipeList.recipe_id == recipe_id,
+                )
+            )
+            .first()
+        )
