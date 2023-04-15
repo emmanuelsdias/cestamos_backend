@@ -7,15 +7,19 @@ from dal.user import ABCUserDal
 from dal.friendship import ABCFriendshipDal
 from dal.item import ABCItemDal
 from dal.user_list import ABCUserListDal
+from dal.recipe_list import ABCRecipeListDal
+from dal.recipe import ABCRecipeDal
 
 from dto.shop_list import ShopList, ShopListCreate, ShopListSummary, ShopListEdit
 from dto.shop_list import UserList, UserListCreate
 from dto.shop_list import Item, ItemCreate
+from dto.recipe import RecipeSummary
 
 from models.shop_list import ShopList as ShopListModel
 from models.user_list import UserList as UserListModel
 from models.user import User as UserModel
 from models.item import Item as ItemModel
+from models.recipe import RecipeList as RecipeListModel
 
 from services.user_based_service import UserBasedService
 
@@ -68,11 +72,15 @@ class ShopListService(ABCShopListService):
         item_dal: ABCItemDal,
         user_dal: ABCUserDal,
         user_list_dal: ABCUserListDal,
+        recipe_list_dal: ABCRecipeListDal,
+        recipe_dal: ABCRecipeDal,
     ):
         super().__init__(user_dal)
         self.friendship_dal = friendship_dal
         self.item_dal = item_dal
         self.user_list_dal = user_list_dal
+        self.recipe_list_dal = recipe_list_dal
+        self.recipe_dal = recipe_dal
         self.dal = shop_list_dal
 
     def construct_user_list_dto(self, user_list: UserListModel) -> UserList:
@@ -283,3 +291,33 @@ class ShopListService(ABCShopListService):
         self.check_user_list_adm_validity(user.user_id, shop_list_id)
         self.dal.delete_shop_list(shop_list.shop_list_id)
         return self.construct_shop_list_summary_dto(shop_list)
+
+    def add_recipe_to_list(
+        self, shop_list_id: int, recipe_id: int, token: str
+    ) -> RecipeSummary:
+        user = self.check_user_validity(token)
+        user_list = self.check_user_list_validity(user.user_id, shop_list_id)
+        if not user_list.is_nutritionist:
+            self.raise_access_denied_error()
+        recipe_list = self.recipe_list_dal.get_recipe_list_by_shop_list_id_and_recipe_id(
+            shop_list_id, recipe_id
+        )
+        if recipe_list is not None:
+            raise HTTPException(status_code=400, detail="Recipe already in list")
+        recipe_list = RecipeListModel(
+            shop_list_id=shop_list_id,
+            recipe_id=recipe_id,
+        )
+        self.recipe_list_dal.create_recipe_list(recipe_list)
+        recipe = self.recipe_dal.get_recipe_by_id(recipe_id)
+        recipe_summary = RecipeSummary(
+            recipe_id=recipe.recipe_id,
+            name=recipe.name,
+            description=recipe.description,
+            prep_time=recipe.prep_time,
+            cooking_time=recipe.cooking_time,
+            resting_time=recipe.resting_time,
+            author_user_id=user.user_id,
+            author_user_name=user.username,
+        )
+        return recipe_summary

@@ -8,6 +8,7 @@ from dal.shop_list import ShopListDal, ABCShopListDal
 from dal.user_list import UserListDal, ABCUserListDal
 from dal.invitation import InvitationDal, ABCInvitationDal
 from dal.friendship import FriendshipDal, ABCFriendshipDal
+from dal.recipe_list import RecipeListDal, ABCRecipeListDal
 
 from factories.db_session import get_db
 
@@ -62,6 +63,14 @@ def get_item_dal(db: Session = Depends(get_db)) -> ABCItemDal:
 
 def get_user_list_dal(db: Session = Depends(get_db)) -> ABCUserListDal:
     dal = UserListDal(db)
+    try:
+        yield dal
+    finally:
+        pass
+
+
+def get_recipe_list_dal(db: Session = Depends(get_db)) -> ABCRecipeListDal:
+    dal = RecipeListDal(db)
     try:
         yield dal
     finally:

@@ -7,7 +7,7 @@ from factories.shop_list import get_shop_list_service
 from dto.shop_list import ShopList, ShopListCreate, ShopListSummary, ShopListEdit
 from dto.shop_list import UserList, UserListCreate, UserListStatus
 from dto.shop_list import Item, ItemCreate
-
+from dto.recipe import RecipeSummary
 from typing import List
 
 
@@ -78,3 +78,13 @@ async def add_item_to_list(
     shop_list_service: ABCShopListService = Depends(get_shop_list_service),
 ):
     return shop_list_service.add_item_to_list(shop_list_id, item, token)
+
+
+@router.post("/{shop_list_id}/recipe/{recipe_id}", response_model=RecipeSummary)
+async def add_recipe_to_list(
+    shop_list_id: int,
+    recipe_id: int,
+    token: str = None,
+    shop_list_service: ABCShopListService = Depends(get_shop_list_service),
+):
+    return shop_list_service.add_recipe_to_list(shop_list_id, recipe_id, token)
