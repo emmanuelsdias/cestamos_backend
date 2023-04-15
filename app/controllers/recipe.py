@@ -13,9 +13,11 @@ router = APIRouter()
 
 @router.get("/", response_model=List[RecipeSummary])
 async def get_recipes(
-    token: str = None, recipe_service: ABCRecipeService = Depends(get_recipe_service)
+    token: str = None,
+    get_feed: bool = False,
+    recipe_service: ABCRecipeService = Depends(get_recipe_service),
 ):
-    return recipe_service.get_recipes(token)
+    return recipe_service.get_recipes(token, get_feed)
 
 
 @router.post("/", response_model=Recipe)

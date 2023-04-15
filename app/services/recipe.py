@@ -22,7 +22,7 @@ class ABCRecipeService(UserBasedService):
         super().__init__(user_dal)
 
     @abc.abstractmethod
-    def get_recipes(self, token) -> List[RecipeSummary]:
+    def get_recipes(self, token: str, get_feed: bool) -> List[RecipeSummary]:
         """Returns recipes from user"""
 
     @abc.abstractmethod
@@ -71,10 +71,40 @@ class RecipeService(ABCRecipeService):
         )
         return recipe_dto
 
-    def get_recipes(self, token) -> List[RecipeSummary]:
+    def construct_recipe_summary_dto(self, recipe: RecipeModel) -> RecipeSummary:
+        author = self.user_dal.get_user_by_id(recipe.user_id)
+        recipe_summary_dto = RecipeSummary(
+            recipe_id=recipe.recipe_id,
+            name=recipe.name,
+            description=recipe.description,
+            prep_time=recipe.prep_time,
+            cooking_time=recipe.cooking_time,
+            resting_time=recipe.resting_time,
+            author_user_id=author.user_id,
+            author_user_name=author.username,
+        )
+        return recipe_summary_dto
+
+    def get_recipes(self, token: str, get_feed: bool) -> List[RecipeSummary]:
         user = self.check_user_validity(token)
-        recipes = self.dal.get_recipes_from_user(user.user_id)
-        return parse_obj_as(List[RecipeSummary], recipes)
+        recipes = []
+        if not get_feed:
+            recipes = self.dal.get_recipes_from_user(user.user_id)
+        else:
+            friendships = self.friendship_dal.get_friendships_from_user(user.user_id)
+            friends_ids = []
+            for friendship in friendships:
+                if friendship.user_id1 == user.user_id:
+                    friends_ids.append(friendship.user_id2)
+                else:
+                    friends_ids.append(friendship.user_id1)
+
+            for friend_id in friends_ids:
+                recipes += self.dal.get_recipes_from_user(friend_id)
+            # filter out private recipes
+            recipes = [recipe for recipe in recipes if recipe.is_public]
+        recipes_dtos = [self.construct_recipe_summary_dto(recipe) for recipe in recipes]
+        return recipes_dtos
 
     def get_recipe_by_id(self, recipe_id: int, token: str) -> Recipe:
         user = self.check_user_validity(token)
