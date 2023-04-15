@@ -17,9 +17,10 @@ router = APIRouter()
 @router.get("/", response_model=List[ShopListSummary])
 async def get_shop_lists(
     token: str = None,
+    return_templates: bool = False,
     shop_list_service: ABCShopListService = Depends(get_shop_list_service),
 ):
-    return shop_list_service.get_shop_lists(token)
+    return shop_list_service.get_shop_lists(token, return_templates)
 
 
 @router.post("/", response_model=ShopListSummary)
