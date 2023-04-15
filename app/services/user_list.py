@@ -94,6 +94,8 @@ class UserListService(ABCUserListService):
             )
             if len(users_from_same_list) == 1:
                 self.shop_list_dal.delete_shop_list(user_list.shop_list_id)
+            else:
+                self.dal.delete_user_list(user_list.user_list_id)
         else:
             self.check_user_list_adm_validity(user.user_id, user_list.shop_list_id)
             self.dal.delete_user_list(user_list.user_list_id)
