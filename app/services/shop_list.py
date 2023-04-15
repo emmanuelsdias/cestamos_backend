@@ -146,10 +146,13 @@ class ShopListService(ABCShopListService):
         user = self.check_user_validity(token)
         shop_lists = self.dal.get_shop_lists_from_user(user.user_id)
         filtered_shop_lists = [
-            shop_list for shop_list in shop_lists if shop_list.is_template == return_templates
+            shop_list
+            for shop_list in shop_lists
+            if shop_list.is_template == return_templates
         ]
         shop_lists_dto = [
-            self.construct_shop_list_summary_dto(shop_list) for shop_list in filtered_shop_lists
+            self.construct_shop_list_summary_dto(shop_list)
+            for shop_list in filtered_shop_lists
         ]
         return shop_lists_dto
 
@@ -245,7 +248,9 @@ class ShopListService(ABCShopListService):
         self, shop_list_id: int, item: ItemCreate, token: str
     ) -> ShopList:
         user = self.check_user_validity(token)
-        self.check_user_list_adm_validity(user.user_id, shop_list_id)
+        user_list = self.check_user_list_validity(user.user_id, shop_list_id)
+        if user_list.is_nutritionist:
+            self.raise_access_denied_error()
         item_db = ItemModel(
             shop_list_id=shop_list_id, name=item.name, quantity=item.quantity
         )
