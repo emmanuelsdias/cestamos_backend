@@ -71,7 +71,7 @@ async def add_users_to_list(
 
 
 @router.post("/{shop_list_id}/item", response_model=ShopList)
-async def add_item_to_list(
+async def add_items_to_list(
     shop_list_id: int,
     items: List[ItemCreate],
     token: str = None,
