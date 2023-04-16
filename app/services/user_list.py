@@ -126,9 +126,10 @@ class UserListService(ABCUserListService):
                 self.dal.delete_user_list(target_user_list.user_list_id)
         else:
             self.check_user_list_adm_validity(user.user_id, target_user_list.shop_list_id)
-            if target_user_list.is_nutritionist:
-                self.recipe_list_dal.delete_recipe_lists_by_shop_list_id(
-                    target_user_list.shop_list_id
-                )
             self.dal.delete_user_list(target_user_list.user_list_id)
+
+        if target_user_list.is_nutritionist:
+            self.recipe_list_dal.delete_recipe_lists_by_shop_list_id(
+                target_user_list.shop_list_id
+            )
         return self.construct_user_list_dto(target_user_list)
