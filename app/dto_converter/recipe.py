@@ -4,6 +4,7 @@ from models.user import User
 
 from dto.recipe import Recipe, RecipeSummary
 
+
 def construct_recipe_summary_dto(recipe: RecipeModel, user: User) -> RecipeSummary:
     return RecipeSummary(
         recipe_id=recipe.recipe_id,
@@ -15,6 +16,7 @@ def construct_recipe_summary_dto(recipe: RecipeModel, user: User) -> RecipeSumma
         author_user_id=user.user_id,
         author_user_name=user.username,
     )
+
 
 def construct_recipe_dto(recipe: RecipeModel, user: User) -> Recipe:
     return Recipe(

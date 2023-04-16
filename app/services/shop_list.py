@@ -57,6 +57,18 @@ class ABCShopListService(UserBasedService):
         """Adds item to list and return the resulting list"""
 
     @abc.abstractmethod
+    def add_recipe_to_list(
+        self, shop_list_id: int, recipe_id: int, token: str
+    ) -> RecipeSummary:
+        """Adds a recipe to a list and return the summary of the recipe"""
+
+    @abc.abstractmethod
+    def remove_recipe_from_list(
+        self, shop_list_id: int, recipe_id: int, token: str
+    ) -> RecipeSummary:
+        """Removes a recipe from a list and return the summary of the recipe"""
+
+    @abc.abstractmethod
     def rename_list(self, shop_list_id: int, new_name: str, token: str) -> ShopList:
         """Renames list"""
 
@@ -67,9 +79,11 @@ class ABCShopListService(UserBasedService):
     @abc.abstractmethod
     def get_recipes_from_list(self, shop_list_id: int, token: str) -> List[RecipeSummary]:
         """Returns all recipes from list"""
-    
+
     @abc.abstractmethod
-    def get_recipe_from_list(shop_list_id: int, recipe_id: int, token: str) -> Recipe:
+    def get_recipe_from_list(
+        self, shop_list_id: int, recipe_id: int, token: str
+    ) -> Recipe:
         """Returns specific recipe from list"""
 
 
@@ -300,17 +314,21 @@ class ShopListService(ABCShopListService):
         self.check_user_list_adm_validity(user.user_id, shop_list_id)
         self.dal.delete_shop_list(shop_list.shop_list_id)
         return self.construct_shop_list_summary_dto(shop_list)
-    
+
     def get_recipes_from_list(self, shop_list_id: int, token: str) -> List[RecipeSummary]:
         user = self.check_user_validity(token)
         self.check_user_list_validity(user.user_id, shop_list_id)
         recipe_lists = self.recipe_list_dal.get_recipe_lists_by_shop_list_id(shop_list_id)
         recipe_ids = [r.recipe_id for r in recipe_lists]
-        recipes = [self.recipe_dal.get_recipe_by_id(recipe_id) for recipe_id in recipe_ids]
+        recipes = [
+            self.recipe_dal.get_recipe_by_id(recipe_id) for recipe_id in recipe_ids
+        ]
         recipes_dto = [construct_recipe_summary_dto(recipe, user) for recipe in recipes]
         return recipes_dto
 
-    def get_recipe_from_list(self, shop_list_id: int, recipe_id: int, token: str) -> Recipe:
+    def get_recipe_from_list(
+        self, shop_list_id: int, recipe_id: int, token: str
+    ) -> Recipe:
         user = self.check_user_validity(token)
         self.check_user_list_validity(user.user_id, shop_list_id)
         recipe = self.recipe_dal.get_recipe_by_id(recipe_id)
@@ -323,7 +341,6 @@ class ShopListService(ABCShopListService):
             self.raise_access_denied_error()
         recipe_dto = construct_recipe_dto(recipe, user)
         return recipe_dto
-
 
     def add_recipe_to_list(
         self, shop_list_id: int, recipe_id: int, token: str
@@ -342,6 +359,23 @@ class ShopListService(ABCShopListService):
             recipe_id=recipe_id,
         )
         self.recipe_list_dal.create_recipe_list(recipe_list)
+        recipe = self.recipe_dal.get_recipe_by_id(recipe_id)
+        recipe_summary = construct_recipe_summary_dto(recipe, user)
+        return recipe_summary
+
+    def remove_recipe_from_list(
+        self, shop_list_id: int, recipe_id: int, token: str
+    ) -> RecipeSummary:
+        user = self.check_user_validity(token)
+        user_list = self.check_user_list_validity(user.user_id, shop_list_id)
+        if not user_list.is_nutritionist:
+            self.raise_access_denied_error()
+        recipe_list = self.recipe_list_dal.get_recipe_list_by_shop_list_id_and_recipe_id(
+            shop_list_id, recipe_id
+        )
+        if recipe_list is None:
+            raise HTTPException(status_code=404, detail="Recipe not in list")
+        self.recipe_list_dal.delete_recipe_list(recipe_list)
         recipe = self.recipe_dal.get_recipe_by_id(recipe_id)
         recipe_summary = construct_recipe_summary_dto(recipe, user)
         return recipe_summary
