@@ -113,18 +113,22 @@ class UserListService(ABCUserListService):
 
     def delete_user_list(self, user_list_id: int, token: str) -> UserList:
         user = self.check_user_validity(token)
-        user_list = self.dal.get_user_list_by_user_list_id(user_list_id)
-        if user_list is None:
+        target_user_list = self.dal.get_user_list_by_user_list_id(user_list_id)
+        if target_user_list is None:
             raise HTTPException(status_code=404, detail="User List doesn't exist")
-        if user.user_id == user_list.user_id:
+        if user.user_id == target_user_list.user_id:
             users_from_same_list = self.dal.get_user_lists_by_shop_list_id(
-                user_list.shop_list_id
+                target_user_list.shop_list_id
             )
             if len(users_from_same_list) == 1:
-                self.shop_list_dal.delete_shop_list(user_list.shop_list_id)
+                self.shop_list_dal.delete_shop_list(target_user_list.shop_list_id)
             else:
-                self.dal.delete_user_list(user_list.user_list_id)
+                self.dal.delete_user_list(target_user_list.user_list_id)
         else:
-            self.check_user_list_adm_validity(user.user_id, user_list.shop_list_id)
-            self.dal.delete_user_list(user_list.user_list_id)
-        return self.construct_user_list_dto(user_list)
+            self.check_user_list_adm_validity(user.user_id, target_user_list.shop_list_id)
+            if target_user_list.is_nutritionist:
+                self.recipe_list_dal.delete_recipe_lists_by_shop_list_id(
+                    target_user_list.shop_list_id
+                )
+            self.dal.delete_user_list(target_user_list.user_list_id)
+        return self.construct_user_list_dto(target_user_list)
