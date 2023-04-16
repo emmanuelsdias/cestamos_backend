@@ -51,10 +51,10 @@ class ABCShopListService(UserBasedService):
         """Adds users to list"""
 
     @abc.abstractmethod
-    def add_item_to_list(
-        self, shop_list_id: int, item: ItemCreate, token: str
+    def add_items_to_list(
+        self, shop_list_id: int, items: List[ItemCreate], token: str
     ) -> ShopList:
-        """Adds item to list and return the resulting list"""
+        """Adds items to list and return the resulting list"""
 
     @abc.abstractmethod
     def add_recipe_to_list(
@@ -290,17 +290,18 @@ class ShopListService(ABCShopListService):
 
         return user_lists_dto
 
-    def add_item_to_list(
-        self, shop_list_id: int, item: ItemCreate, token: str
+    def add_items_to_list(
+        self, shop_list_id: int, items: List[ItemCreate], token: str
     ) -> ShopList:
         user = self.check_user_validity(token)
         user_list = self.check_user_list_validity(user.user_id, shop_list_id)
         if user_list.is_nutritionist:
             self.raise_access_denied_error()
-        item_db = ItemModel(
-            shop_list_id=shop_list_id, name=item.name, quantity=item.quantity
-        )
-        self.item_dal.create_item(item_db)
+        for item in items:
+            item_db = ItemModel(
+                shop_list_id=shop_list_id, name=item.name, quantity=item.quantity
+            )
+            self.item_dal.create_item(item_db)
 
         return self.get_shop_list_by_id(shop_list_id, token)
 
