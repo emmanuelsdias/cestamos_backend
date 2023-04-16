@@ -34,6 +34,10 @@ class ABCRecipeListDal:
     def delete_recipe_list(self, recipe_list: RecipeList) -> RecipeList:
         """Delete recipe_list given id"""
 
+    @abc.abstractmethod
+    def delete_recipe_lists_by_shop_list_id(self, shop_list_id: int) -> None:
+        """Delete recipe_lists given shop list id"""
+
 
 class RecipeListDal(ABCRecipeListDal):
     def __init__(self, db_session: Session):
@@ -80,3 +84,7 @@ class RecipeListDal(ABCRecipeListDal):
         ).delete()
         self.db.commit()
         return deleted_recipe_list
+
+    def delete_recipe_lists_by_shop_list_id(self, shop_list_id: int) -> None:
+        self.db.query(RecipeList).filter(RecipeList.shop_list_id == shop_list_id).delete()
+        self.db.commit()
