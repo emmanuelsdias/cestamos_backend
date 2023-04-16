@@ -1,7 +1,6 @@
 from dal.user import ABCUserDal
 from fastapi import HTTPException
 from models.user import User
-from typing import Optional
 
 
 class UserBasedService:
@@ -11,7 +10,7 @@ class UserBasedService:
     def raise_access_denied_error(self):
         raise HTTPException(status_code=403, detail="Access Denied")
 
-    def check_user_validity(self, token: str) -> Optional[User]:
+    def check_user_validity(self, token: str) -> User:
         if token is None:
             self.raise_access_denied_error()
         user = self.user_dal.get_user_by_token(token)

@@ -12,8 +12,20 @@ class ABCRecipeListDal:
     def create_recipe_list(self, recipe_list: RecipeList) -> RecipeList:
         """Adds recipe to list"""
 
+    @abc.abstractmethod
     def get_recipe_lists_by_shop_list_id(self, shop_list_id: int) -> List[RecipeList]:
         """Gets all recipe_lists from list"""
+
+    @abc.abstractmethod
+    def get_recipe_list_by_shop_list_id_and_recipe_id(
+        self, shop_list_id: int, recipe_id: int
+    ) -> RecipeList:
+        """Gets recipe_list from list and recipe ids"""
+
+    @abc.abstractmethod
+    def get_recipe_lists_by_shop_list_id(self, shop_list_id: int) -> List[RecipeList]:
+        """Gets all recipe_lists from list"""
+        
 
 class RecipeListDal(ABCRecipeListDal):
     def __init__(self, db_session: Session):

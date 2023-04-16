@@ -13,13 +13,12 @@ from dal.recipe import ABCRecipeDal
 from dto.shop_list import ShopList, ShopListCreate, ShopListSummary, ShopListEdit
 from dto.shop_list import UserList, UserListCreate
 from dto.shop_list import Item, ItemCreate
-from dto.recipe import RecipeSummary
+from dto.recipe import RecipeSummary, Recipe
 
-from dto_converter.recipe import construct_recipe_summary_dto
+from dto_converter.recipe import construct_recipe_summary_dto, construct_recipe_dto
 
 from models.shop_list import ShopList as ShopListModel
 from models.user_list import UserList as UserListModel
-from models.user import User as UserModel
 from models.item import Item as ItemModel
 from models.recipe import RecipeList as RecipeListModel
 
@@ -64,6 +63,14 @@ class ABCShopListService(UserBasedService):
     @abc.abstractmethod
     def delete_list(self, shop_list_id: int, token: str) -> ShopListSummary:
         """Deletes list"""
+
+    @abc.abstractmethod
+    def get_recipes_from_list(self, shop_list_id: int, token: str) -> List[RecipeSummary]:
+        """Returns all recipes from list"""
+    
+    @abc.abstractmethod
+    def get_recipe_from_list(shop_list_id: int, recipe_id: int, token: str) -> Recipe:
+        """Returns specific recipe from list"""
 
 
 class ShopListService(ABCShopListService):
@@ -302,6 +309,21 @@ class ShopListService(ABCShopListService):
         recipes = [self.recipe_dal.get_recipe_by_id(recipe_id) for recipe_id in recipe_ids]
         recipes_dto = [construct_recipe_summary_dto(recipe, user) for recipe in recipes]
         return recipes_dto
+
+    def get_recipe_from_list(self, shop_list_id: int, recipe_id: int, token: str) -> Recipe:
+        user = self.check_user_validity(token)
+        self.check_user_list_validity(user.user_id, shop_list_id)
+        recipe = self.recipe_dal.get_recipe_by_id(recipe_id)
+        if recipe is None:
+            raise HTTPException(status_code=404, detail="Recipe doesn't exist")
+        recipe_list = self.recipe_list_dal.get_recipe_list_by_shop_list_id_and_recipe_id(
+            shop_list_id, recipe_id
+        )
+        if recipe_list is None:
+            self.raise_access_denied_error()
+        recipe_dto = construct_recipe_dto(recipe, user)
+        return recipe_dto
+
 
     def add_recipe_to_list(
         self, shop_list_id: int, recipe_id: int, token: str
