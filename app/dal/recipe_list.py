@@ -12,6 +12,8 @@ class ABCRecipeListDal:
     def create_recipe_list(self, recipe_list: RecipeList) -> RecipeList:
         """Adds recipe to list"""
 
+    def get_recipe_lists_by_shop_list_id(self, shop_list_id: int) -> List[RecipeList]:
+        """Gets all recipe_lists from list"""
 
 class RecipeListDal(ABCRecipeListDal):
     def __init__(self, db_session: Session):
@@ -35,4 +37,11 @@ class RecipeListDal(ABCRecipeListDal):
                 )
             )
             .first()
+        )
+
+    def get_recipe_lists_by_shop_list_id(self, shop_list_id: int) -> List[RecipeList]:
+        return (
+            self.db.query(RecipeList)
+            .filter(RecipeList.shop_list_id == shop_list_id)
+            .all()
         )

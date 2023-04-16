@@ -15,6 +15,8 @@ from dto.shop_list import UserList, UserListCreate
 from dto.shop_list import Item, ItemCreate
 from dto.recipe import RecipeSummary
 
+from dto_converter.recipe import construct_recipe_summary_dto
+
 from models.shop_list import ShopList as ShopListModel
 from models.user_list import UserList as UserListModel
 from models.user import User as UserModel
@@ -291,6 +293,15 @@ class ShopListService(ABCShopListService):
         self.check_user_list_adm_validity(user.user_id, shop_list_id)
         self.dal.delete_shop_list(shop_list.shop_list_id)
         return self.construct_shop_list_summary_dto(shop_list)
+    
+    def get_recipes_from_list(self, shop_list_id: int, token: str) -> List[RecipeSummary]:
+        user = self.check_user_validity(token)
+        self.check_user_list_validity(user.user_id, shop_list_id)
+        recipe_lists = self.recipe_list_dal.get_recipe_lists_by_shop_list_id(shop_list_id)
+        recipe_ids = [r.recipe_id for r in recipe_lists]
+        recipes = [self.recipe_dal.get_recipe_by_id(recipe_id) for recipe_id in recipe_ids]
+        recipes_dto = [construct_recipe_summary_dto(recipe, user) for recipe in recipes]
+        return recipes_dto
 
     def add_recipe_to_list(
         self, shop_list_id: int, recipe_id: int, token: str
@@ -310,14 +321,5 @@ class ShopListService(ABCShopListService):
         )
         self.recipe_list_dal.create_recipe_list(recipe_list)
         recipe = self.recipe_dal.get_recipe_by_id(recipe_id)
-        recipe_summary = RecipeSummary(
-            recipe_id=recipe.recipe_id,
-            name=recipe.name,
-            description=recipe.description,
-            prep_time=recipe.prep_time,
-            cooking_time=recipe.cooking_time,
-            resting_time=recipe.resting_time,
-            author_user_id=user.user_id,
-            author_user_name=user.username,
-        )
+        recipe_summary = construct_recipe_summary_dto(recipe, user)
         return recipe_summary
