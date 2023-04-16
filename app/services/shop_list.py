@@ -46,7 +46,7 @@ class ABCShopListService(UserBasedService):
 
     @abc.abstractmethod
     def add_users_to_list(
-        self, shop_list_id: int, user_lists: List[UserListCreate], token: str
+        self, shop_list_id: int, new_user_lists: List[UserListCreate], token: str
     ) -> List[UserList]:
         """Adds users to list"""
 
@@ -244,7 +244,7 @@ class ShopListService(ABCShopListService):
         return created_shop_list_dto
 
     def add_users_to_list(
-        self, shop_list_id: int, user_lists: List[UserListCreate], token: str
+        self, shop_list_id: int, new_user_lists: List[UserListCreate], token: str
     ) -> List[UserList]:
         user = self.check_user_validity(token)
         self.check_user_list_adm_validity(user.user_id, shop_list_id)
@@ -253,7 +253,22 @@ class ShopListService(ABCShopListService):
         )
         current_user_list_ids = [u.user_id for u in current_user_lists]
 
-        for user_list in user_lists:
+        there_is_nutritionist_in_list = False
+        for ul in current_user_lists:
+            if ul.is_nutritionist:
+                there_is_nutritionist_in_list = True
+                break
+
+        for ul in new_user_lists:
+            if ul.is_nutritionist:
+                if there_is_nutritionist_in_list:
+                    raise HTTPException(
+                        status_code=400,
+                        detail="The list will get more than one nutritionist.",
+                    )
+                there_is_nutritionist_in_list = True
+
+        for user_list in new_user_lists:
             if not self.friendship_dal.get_friendship_from_user_pair(
                 user.user_id, user_list.user_id
             ):
