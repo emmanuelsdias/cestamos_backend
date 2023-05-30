@@ -28,3 +28,6 @@ publish:
 .PHONY: lint-python
 lint-python:
 	black . --line-length 90
+
+test:
+	cd app && python -m pytest
